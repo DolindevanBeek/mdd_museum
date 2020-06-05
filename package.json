@@ -1,0 +1,22 @@
+{
+  "name": "finalexhibition",
+  "version": "1.0.0",
+  "description": "final exhibition threejs",
+  "scripts": {
+    "test": "test",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^3.5.3",
+    "file-loader": "^6.0.0",
+    "style-loader": "^1.2.1",
+    "three": "^0.116.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "ammo.js": "0.0.10"
+  }
+}
