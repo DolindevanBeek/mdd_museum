@@ -100,12 +100,12 @@ function init(){
   //Object
   {
     const mtlLoader = new MTLLoader();
-    mtlLoader.load('/objects/200605_graduation_studio_v2.mtl', (mtlParseResult) => {
+    mtlLoader.load('./objects/200605_graduation_studio_v2.mtl', (mtlParseResult) => {
       const objLoader = new OBJLoader2();
       const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
       objLoader.addMaterials(materials);
 
-      objLoader.load('/objects/200605_graduation_studio_v2.obj', (museum) => {
+      objLoader.load('./objects/200605_graduation_studio_v2.obj', (museum) => {
         museum.updateMatrixWorld();
         scene.add(museum);
         museum.castShadow = true;
