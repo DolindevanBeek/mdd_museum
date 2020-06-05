@@ -10,7 +10,7 @@ import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridg
 //import THREEx from './threex.keyboardstate.js';
 
 //standard global variables
-var scene, camera, renderer, controls, MovingCube;
+var scene, camera, renderer, controls, MovingCube, hemiLight, boxsizeWithSpace;
 var clock = new THREE.Clock();
 
 var keyboard = new THREEx.KeyboardState();
@@ -26,13 +26,6 @@ function init(){
   //create scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color('black');
-
-  // const fov = 45;
-  // const aspect = 2;  // the canvas default
-  // const near = 0.1;
-  // const far = 100;
-  // camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  // camera.position.set(-2, 0.7, 10);
 
   var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
   var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
@@ -119,7 +112,8 @@ function init(){
         const boxCenter = box.getCenter(new THREE.Vector3());
 
         // set the camera to frame the box
-        frameArea(boxSize * 1.2, boxSize, boxCenter, camera);
+        boxsizeWithSpace = boxSize * 1.2;
+        frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
 
         // update the Trackball controls to handle the new size
         controls.maxDistance = boxSize * 10;
@@ -139,25 +133,64 @@ function init(){
   // }
 
   //hemisphere light
-  {
-    const skyColor = 0xB1E1FF;  // light blue
-    const groundColor = 0xB97A20;  // brownish orange
-    const intensity = 1;
-    const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-    scene.add(light);
-  }
+
+    // const skyColor = 0xB1E1FF;  // light blue
+    // const groundColor = 0x555555;  // brownish orange
+    // const intensity = 0.5;
+    // const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+    // scene.add(light);
+
+  hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+  hemiLight.color.setHSL(0.6, 1, 0.6);
+  hemiLight.groundColor.setHSL(0.095, 1, 0.75);
+  hemiLight.position.set(0, 50, 0);
+  scene.add(hemiLight);
+
 
   //Directional light
   {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
-    light.position.set(0, 10, 0);
-    light.target.position.set(-5, 0, 0);
-    light.castShadow = true;
-    scene.add(light);
-    scene.add(light.target);
+    // const color = 0xFFFFFF;
+    // const intensity = 1;
+    // const light = new THREE.DirectionalLight(color, intensity);
+    // light.position.set(0, 10, 0);
+    // light.target.position.set(-5, 0, 0);
+    // light.castShadow = true;
+    // scene.add(light);
+    // scene.add(light.target);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.color.setHSL(0.1, 1, 0.95);
+    dirLight.position.set(- 1, 1.75, 1);
+    dirLight.position.multiplyScalar(30);
+    scene.add(dirLight);
+
+    dirLight.castShadow = true;
   }
+
+  // SKYDOME
+
+
+    var vertexShader = document.getElementById('vertexShader').textContent;
+    var fragmentShader = document.getElementById('fragmentShader').textContent;
+    var uniforms = {
+      "topColor": { value: new THREE.Color(0x0077ff) },
+      "bottomColor": { value: new THREE.Color(0xffffff) },
+      "offset": { value: 33 },
+      "exponent": { value: 0.6 }
+    };
+    uniforms["topColor"].value.copy(hemiLight.color);
+
+  var skyGeo = new THREE.SphereBufferGeometry(100000, 32, 15);
+    var skyMat = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      side: THREE.BackSide
+    });
+
+    var sky = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(sky);
+
 
   //Cube
   {
