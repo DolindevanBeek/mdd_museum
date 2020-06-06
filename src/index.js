@@ -10,7 +10,7 @@ import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridg
 //import THREEx from './threex.keyboardstate.js';
 
 //standard global variables
-var scene, camera, renderer, controls, MovingCube, hemiLight, boxsizeWithSpace;
+var scene, camera, renderer, controls, MovingCube, hemiLight, boxsizeWithSpace, relativeCameraOffset, cameraOffset;
 var clock = new THREE.Clock();
 
 var keyboard = new THREEx.KeyboardState();
@@ -31,16 +31,17 @@ function init(){
   var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(0, 150, 400);
-  camera.lookAt(scene.position);
+  camera.position.set(1001, 650, 5000);
+  //camera.lookAt(scene.position);
 
   renderer = new THREE.WebGLRenderer({ canvas });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  controls = new OrbitControls(camera, canvas);
+  //orbitcontrols
+  //controls = new OrbitControls(camera, canvas);
   //controls.target.set(0, 5, 0);
-  controls.update();
+  //controls.update();
 
   //plane
   // {
@@ -77,7 +78,7 @@ function init(){
 
     // move the camera to a position distance units way from the center
     // in whatever direction the camera was from the center already
-    camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
+    //camera.position.copy(direction.multiplyScalar(distance).add(boxCenter));
 
     // pick some near and far values for the frustum that
     // will contain the box.
@@ -87,7 +88,11 @@ function init(){
     camera.updateProjectionMatrix();
 
     // point the camera to look at the center of the box
-    camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
+    //camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
+
+    // point the camera at the cube
+    camera.lookAt(MovingCube.position);
+
   }
 
   //Object
@@ -116,9 +121,9 @@ function init(){
         frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
 
         // update the Trackball controls to handle the new size
-        controls.maxDistance = boxSize * 10;
-        controls.target.copy(boxCenter);
-        controls.update();
+        //controls.maxDistance = boxSize * 10;
+        //controls.target.copy(boxCenter);
+        //controls.update();
       });
     });
   }
@@ -133,12 +138,6 @@ function init(){
   // }
 
   //hemisphere light
-
-    // const skyColor = 0xB1E1FF;  // light blue
-    // const groundColor = 0x555555;  // brownish orange
-    // const intensity = 0.5;
-    // const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
-    // scene.add(light);
 
   hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
   hemiLight.color.setHSL(0.6, 1, 0.6);
@@ -165,6 +164,14 @@ function init(){
     scene.add(dirLight);
 
     dirLight.castShadow = true;
+
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight2.color.setHSL(0.1, 1, 0.95);
+    dirLight2.position.set(1, 1.75, -1);
+    dirLight2.position.multiplyScalar(30);
+    scene.add(dirLight2);
+
+    dirLight2.castShadow = true;
   }
 
   // SKYDOME
@@ -203,6 +210,11 @@ function init(){
     scene.add(MovingCube);
   }
 
+  //Orbitcontrols
+    controls = new OrbitControls(camera, canvas);
+    //controls.target.set(MovingCube.position);
+    controls.update();
+
 }
 
 function animate() {
@@ -217,50 +229,57 @@ function update() {
   var moveDistance = 5000 * delta; // 200 pixels per second
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
-  // local transformations
+  // Maybe still turn the cube but moving forward is minus the degree its just been turned?
 
-  // move forwards/backwards/left/right
-  if (keyboard.pressed("up"))
-    MovingCube.translateZ(-moveDistance);
-  if (keyboard.pressed("down"))
-    MovingCube.translateZ(moveDistance);
-  if (keyboard.pressed("left"))
-    MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotateAngle);
-    //MovingCube.translateX(-moveDistance);
-  if (keyboard.pressed("right"))
-    MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
-    //MovingCube.translateX(moveDistance);
+  if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right")){
 
-   // rotate left/right/up/down
-  var rotation_matrix = new THREE.Matrix4().identity();
-  if (keyboard.pressed("A"))
-    //MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotateAngle);
-  if (keyboard.pressed("D"))
-    //MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
-  if (keyboard.pressed("W"))
-    camera.position.z = camera.position.z - moveDistance;
-    //MovingCube.rotateOnAxis(new THREE.Vector3(1, 0, 0), rotateAngle);
-  if (keyboard.pressed("S"))
-    camera.position.z = camera.position.z + moveDistance;
-    //MovingCube.rotateOnAxis(new THREE.Vector3(1, 0, 0), -rotateAngle);
+    // move forwards/backwards/left/right
+    if (keyboard.pressed("up"))
+      MovingCube.translateZ(-moveDistance);
+    if (keyboard.pressed("down"))
+      MovingCube.translateZ(moveDistance);
+    if (keyboard.pressed("left"))
+      MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotateAngle);
+    if (keyboard.pressed("right"))
+      MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-  if (keyboard.pressed("Z")) {
-    MovingCube.position.set(0, 25.1, 0);
-    MovingCube.rotation.set(0, 0, 0);
+    relativeCameraOffset = new THREE.Vector3(0, 50, 5000);
+    cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
+
+    camera.position.x = cameraOffset.x;
+    camera.position.y = cameraOffset.y;
+    camera.position.z = cameraOffset.z;
+    camera.lookAt(MovingCube.position);
   }
 
-  var relativeCameraOffset = new THREE.Vector3(0, 50, 5000);
+  canvas.addEventListener('mousedown', function (e) {
+    camera.position.set(camera.position.x, camera.position.y, camera.position.z);
+    controls.target.copy(MovingCube.position);
+    controls.update();
+  }, false);
 
-  var cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
+   // rotate left/right/up/down
+  //var rotation_matrix = new THREE.Matrix4().identity();
+  // if (keyboard.pressed("W"))
+  //    //camera.rotation.x = camera.rotation.x - rotateAngle;
+  //    MovingCube.rotateOnAxis(new THREE.Vector3(1, 0, 0), rotateAngle);
+  // if (keyboard.pressed("S"))
+  //    //camera.rotation.x = camera.rotation.x + moveDistance;
+  //    MovingCube.rotateOnAxis(new THREE.Vector3(1, 0, 0), -rotateAngle);
 
-  camera.position.x = cameraOffset.x;
-  camera.position.y = cameraOffset.y;
-  camera.position.z = cameraOffset.z;
-  camera.lookAt(MovingCube.position);
+  // if (keyboard.pressed("Z")) {
+  //   MovingCube.position.set(0, 25.1, 0);
+  //   MovingCube.rotation.set(0, 0, 0);
+  // }
 
-  // var delta = clock.getDelta(); // seconds.
-  // var moveDistance = 10 * delta; // 100 pixels per second
-  // var rotateAngle = Math.PI / 2 * delta;
+  // relativeCameraOffset = new THREE.Vector3(0, 50, 5000);
+  // cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
+
+  // camera.position.x = cameraOffset.x;
+  // camera.position.y = cameraOffset.y;
+  // camera.position.z = cameraOffset.z;
+  // camera.lookAt(MovingCube.position);
+  //controls.target = MovingCube.position;
 
   // if (keyboard.pressed("up"))
   //   camera.position.z = camera.position.z - moveDistance;
@@ -270,78 +289,6 @@ function update() {
   //   camera.rotation.y = camera.rotation.y + rotateAngle;
   // if (keyboard.pressed("right"))
   //   camera.rotation.y = camera.rotation.y - rotateAngle;
-
-  // console.log(controls.target);
-
-  // keyboard.update();
-
-  // var moveDistance = 50 * clock.getDelta();
-
-  // if (keyboard.down("left"))
-  //   mesh.translateX(-50);
-
-  // if (keyboard.down("right"))
-  //   mesh.translateX(50);
-
-  // if (keyboard.pressed("A"))
-  //   mesh.translateX(-moveDistance);
-
-  // if (keyboard.pressed("D"))
-  //   mesh.translateX(moveDistance);
-
-  // if (keyboard.down("R"))
-  //   mesh.material.color = new THREE.Color(0xff0000);
-  // if (keyboard.up("R"))
-  //   mesh.material.color = new THREE.Color(0x0000ff);
-
-  // window.addEventListener("keydown", function (event) {
-  //   if (event.defaultPrevented) {
-  //     return; // Do nothing if the event was already processed
-  //   }
-
-  //   var delta = 10;
-  //   var moveDistance = 50 * clock.getDelta();
-
-  //   switch (event.key) {
-  //     case "Down": // IE/Edge specific value
-  //     case "ArrowDown":
-  //       // Do something for "down arrow" key press.
-  //       console.log('down');
-  //       camera.position.z = camera.position.z + moveDistance;
-  //       console.log(camera.position.z);
-  //       camera.updateProjectionMatrix();
-  //       break;
-  //     case "Up": // IE/Edge specific value
-  //     case "ArrowUp":
-  //       // Do something for "up arrow" key press.
-  //       console.log('up');
-  //       camera.position.z = camera.position.z - moveDistance;
-  //       camera.updateProjectionMatrix();
-  //       break;
-  //     case "Left": // IE/Edge specific value
-  //     case "ArrowLeft":
-  //       // Do something for "left arrow" key press.
-  //       console.log('left');
-  //       break;
-  //     case "Right": // IE/Edge specific value
-  //     case "ArrowRight":
-  //       // Do something for "right arrow" key press.
-  //       console.log('right');
-  //       break;
-  //     case "Enter":
-  //       // Do something for "enter" or "return" key press.
-  //       break;
-  //     case "Esc": // IE/Edge specific value
-  //     case "Escape":
-  //       // Do something for "esc" key press.
-  //       break;
-  //     default:
-  //       return; // Quit when this doesn't handle the key event.
-  //   }
-
-  //   // Cancel the default action to avoid it being handled twice
-  //   event.preventDefault();
-  // }, true);
 
   //controls.update();
 }
@@ -367,7 +314,6 @@ function render() {
 
   renderer.render(scene, camera);
 
-  //requestAnimationFrame(render);
 }
 
 animate();
