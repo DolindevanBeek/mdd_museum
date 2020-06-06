@@ -10,7 +10,7 @@ import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridg
 //import THREEx from './threex.keyboardstate.js';
 
 //standard global variables
-var scene, camera, renderer, controls, MovingCube, hemiLight, boxsizeWithSpace, relativeCameraOffset, cameraOffset;
+var scene, camera, renderer, controls, MovingCube, hemiLight, spotLight, boxsizeWithSpace, relativeCameraOffset, cameraOffset;
 var clock = new THREE.Clock();
 
 var keyboard = new THREEx.KeyboardState();
@@ -95,47 +95,14 @@ function init(){
 
   }
 
-  //Object
-  {
-    const mtlLoader = new MTLLoader();
-    mtlLoader.load('./objects/200605_graduation_studio_v2.mtl', (mtlParseResult) => {
-      const objLoader = new OBJLoader2();
-      const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
-      objLoader.addMaterials(materials);
-
-      objLoader.load('./objects/200605_graduation_studio_v2.obj', (museum) => {
-        museum.updateMatrixWorld();
-        scene.add(museum);
-        museum.castShadow = true;
-        museum.receiveShadow = true;
-
-        // compute the box that contains all the stuff
-        // from root and below
-        const box = new THREE.Box3().setFromObject(museum);
-
-        const boxSize = box.getSize(new THREE.Vector3()).length();
-        const boxCenter = box.getCenter(new THREE.Vector3());
-
-        // set the camera to frame the box
-        boxsizeWithSpace = boxSize * 1.2;
-        frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
-
-        // update the Trackball controls to handle the new size
-        //controls.maxDistance = boxSize * 10;
-        //controls.target.copy(boxCenter);
-        //controls.update();
-      });
-    });
-  }
-
   //ambient light
 
-  // {
-  //   const color = 0xFFFFFF;
-  //   const intensity = 1;
-  //   const light = new THREE.AmbientLight(color, intensity);
-  //   scene.add(light);
-  // }
+  {
+    const color = 0xFFFFFF;
+    const intensity = 0.3;
+    const light = new THREE.AmbientLight(color, intensity);
+    scene.add(light);
+  }
 
   //hemisphere light
 
@@ -157,25 +124,63 @@ function init(){
     // scene.add(light);
     // scene.add(light.target);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.color.setHSL(0.1, 1, 0.95);
-    dirLight.position.set(- 1, 1.75, 1);
+    dirLight.position.set(0, 1500, 800);
     dirLight.position.multiplyScalar(30);
     scene.add(dirLight);
 
     dirLight.castShadow = true;
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1);
-    dirLight2.color.setHSL(0.1, 1, 0.95);
-    dirLight2.position.set(1, 1.75, -1);
-    dirLight2.position.multiplyScalar(30);
-    scene.add(dirLight2);
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
 
-    dirLight2.castShadow = true;
+    var d = 80000;
+
+    dirLight.shadow.camera.left = - d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d;
+    dirLight.shadow.camera.bottom = - d;
+
+    dirLight.shadow.camera.far = 80000;
+    dirLight.shadow.bias = - 0.0001;
+
+    var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
+    scene.add(dirLightHeper);
+
+    var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+    scene.add(shadowHelper);
+
+    // const dirLight2 = new THREE.DirectionalLight(0xffffff, 1);
+    // dirLight2.color.setHSL(0.1, 1, 0.95);
+    // dirLight2.position.set(1, 1.75, -1);
+    // dirLight2.position.multiplyScalar(30);
+    // scene.add(dirLight2);
+
+    // dirLight2.castShadow = true;
+  }
+
+  {
+    // spotLight = new THREE.SpotLight(0xffffff, 1, 0, Math.PI / 5, 0.3);
+    // spotLight.position.set(0, 15000, 10000);
+    // spotLight.target.position.set(0, 0, 0);
+
+    // spotLight.castShadow = true;
+    // spotLight.shadow.camera.near = 1200;
+    // spotLight.shadow.camera.far = 2500;
+    // spotLight.shadow.bias = 0.0001;
+
+    // spotLight.shadow.mapSize.width = 2048;
+    // spotLight.shadow.mapSize.height = 2048;
+
+    // scene.add(spotLight);
+
+    // var shadowHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+    // scene.add(shadowHelper);
   }
 
   // SKYDOME
-
 
     var vertexShader = document.getElementById('vertexShader').textContent;
     var fragmentShader = document.getElementById('fragmentShader').textContent;
@@ -198,6 +203,41 @@ function init(){
     var sky = new THREE.Mesh(skyGeo, skyMat);
     scene.add(sky);
 
+  //Object
+  {
+    const mtlLoader = new MTLLoader();
+    mtlLoader.load('./objects/200605_graduation_studio_v2.mtl', (mtlParseResult) => {
+      const objLoader = new OBJLoader2();
+      const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
+      objLoader.addMaterials(materials);
+
+      objLoader.load('./objects/200605_graduation_studio_v2.obj', (museum) => {
+        museum.updateMatrixWorld();
+        scene.add(museum);
+        museum.castShadow = true;
+        museum.receiveShadow = true;
+
+        museum.traverse(function (child) { child.castShadow = true; child.receiveShadow = true; });
+
+        // compute the box that contains all the stuff
+        // from root and below
+        const box = new THREE.Box3().setFromObject(museum);
+
+        const boxSize = box.getSize(new THREE.Vector3()).length();
+        const boxCenter = box.getCenter(new THREE.Vector3());
+
+        // set the camera to frame the box
+        boxsizeWithSpace = boxSize * 1.2;
+        frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+
+        // update the Trackball controls to handle the new size
+        //controls.maxDistance = boxSize * 10;
+        //controls.target.copy(boxCenter);
+        //controls.update();
+        console.log(museum);
+      });
+    });
+  }
 
   //Cube
   {
@@ -206,6 +246,7 @@ function init(){
     var cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
     MovingCube.position.set(cubeSize + 1, cubeSize / 2 + 100, 0);
+    MovingCube.castShadow = true;
     //MovingCube.position.set(0, 1, 0);
     scene.add(MovingCube);
   }
@@ -213,6 +254,7 @@ function init(){
   //Orbitcontrols
     controls = new OrbitControls(camera, canvas);
     //controls.target.set(MovingCube.position);
+    //controls.maxPolarAngle = Math.PI / 2; //dont let it go below ground
     controls.update();
 
 }
@@ -229,8 +271,7 @@ function update() {
   var moveDistance = 5000 * delta; // 200 pixels per second
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
-  // Maybe still turn the cube but moving forward is minus the degree its just been turned?
-
+  // IF keyboard: set camera behind cube and move cube
   if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right")){
 
     // move forwards/backwards/left/right
@@ -252,45 +293,12 @@ function update() {
     camera.lookAt(MovingCube.position);
   }
 
+  // IF mousedown: activate orbitcontrols
   canvas.addEventListener('mousedown', function (e) {
     camera.position.set(camera.position.x, camera.position.y, camera.position.z);
     controls.target.copy(MovingCube.position);
     controls.update();
   }, false);
-
-   // rotate left/right/up/down
-  //var rotation_matrix = new THREE.Matrix4().identity();
-  // if (keyboard.pressed("W"))
-  //    //camera.rotation.x = camera.rotation.x - rotateAngle;
-  //    MovingCube.rotateOnAxis(new THREE.Vector3(1, 0, 0), rotateAngle);
-  // if (keyboard.pressed("S"))
-  //    //camera.rotation.x = camera.rotation.x + moveDistance;
-  //    MovingCube.rotateOnAxis(new THREE.Vector3(1, 0, 0), -rotateAngle);
-
-  // if (keyboard.pressed("Z")) {
-  //   MovingCube.position.set(0, 25.1, 0);
-  //   MovingCube.rotation.set(0, 0, 0);
-  // }
-
-  // relativeCameraOffset = new THREE.Vector3(0, 50, 5000);
-  // cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
-
-  // camera.position.x = cameraOffset.x;
-  // camera.position.y = cameraOffset.y;
-  // camera.position.z = cameraOffset.z;
-  // camera.lookAt(MovingCube.position);
-  //controls.target = MovingCube.position;
-
-  // if (keyboard.pressed("up"))
-  //   camera.position.z = camera.position.z - moveDistance;
-  // if (keyboard.pressed("down"))
-  //   camera.position.z = camera.position.z + moveDistance;
-  // if (keyboard.pressed("left"))
-  //   camera.rotation.y = camera.rotation.y + rotateAngle;
-  // if (keyboard.pressed("right"))
-  //   camera.rotation.y = camera.rotation.y - rotateAngle;
-
-  //controls.update();
 }
 
 function render() {
