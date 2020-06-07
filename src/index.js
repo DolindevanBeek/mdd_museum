@@ -115,17 +115,7 @@ function init(){
 
   //Directional light
   {
-    // const color = 0xFFFFFF;
-    // const intensity = 1;
-    // const light = new THREE.DirectionalLight(color, intensity);
-    // light.position.set(0, 10, 0);
-    // light.target.position.set(-5, 0, 0);
-    // light.castShadow = true;
-    // scene.add(light);
-    // scene.add(light.target);
-
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.color.setHSL(0.1, 1, 0.95);
     dirLight.position.set(0, 1500, 800);
     dirLight.position.multiplyScalar(30);
@@ -133,8 +123,8 @@ function init(){
 
     dirLight.castShadow = true;
 
-    dirLight.shadow.mapSize.width = 2048;
-    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.mapSize.width = 3048;
+    dirLight.shadow.mapSize.height = 3048;
 
     var d = 80000;
 
@@ -152,13 +142,6 @@ function init(){
     var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
     scene.add(shadowHelper);
 
-    // const dirLight2 = new THREE.DirectionalLight(0xffffff, 1);
-    // dirLight2.color.setHSL(0.1, 1, 0.95);
-    // dirLight2.position.set(1, 1.75, -1);
-    // dirLight2.position.multiplyScalar(30);
-    // scene.add(dirLight2);
-
-    // dirLight2.castShadow = true;
   }
 
   {
@@ -206,18 +189,32 @@ function init(){
   //Object
   {
     const mtlLoader = new MTLLoader();
-    mtlLoader.load('./objects/200605_graduation_studio_v2.mtl', (mtlParseResult) => {
+    mtlLoader.load('./objects/200606_graduation_studio.mtl', (mtlParseResult) => {
       const objLoader = new OBJLoader2();
       const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
       objLoader.addMaterials(materials);
 
-      objLoader.load('./objects/200605_graduation_studio_v2.obj', (museum) => {
+      objLoader.load('./objects/200606_graduation_studio.obj', (museum) => {
         museum.updateMatrixWorld();
         scene.add(museum);
         museum.castShadow = true;
         museum.receiveShadow = true;
 
-        museum.traverse(function (child) { child.castShadow = true; child.receiveShadow = true; });
+        museum.traverse(function (child) {
+
+          //if child name is glass then don't cast shadow
+
+          //if (child.name == 'Mesh7 glass_3 glass_section2 dome_glass dome_roof Model') {
+          if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+            console.log('glass3');
+
+            child.receiveShadow = true;
+          }
+          else {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
 
         // compute the box that contains all the stuff
         // from root and below
