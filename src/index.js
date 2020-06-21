@@ -129,11 +129,11 @@ function init(){
     dirLight.shadow.camera.far = 80000;
     dirLight.shadow.bias = - 0.0001;
 
-    var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
-    scene.add(dirLightHeper);
+    // var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
+    // scene.add(dirLightHeper);
 
-    var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
-    scene.add(shadowHelper);
+    // var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+    // scene.add(shadowHelper);
 
   }
 
@@ -251,21 +251,21 @@ function init(){
   }
 
   //wall
-  var wallGeometry = new THREE.CubeGeometry(2000, 2000, 200, 1, 1, 1);
-  var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8888ff });
-  var wireMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
+  // var wallGeometry = new THREE.CubeGeometry(2000, 2000, 200, 1, 1, 1);
+  // var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8888ff });
+  // var wireMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
 
-  {
-    var wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
-    wall2.position.set(-150, 50, 0);
-    wall2.rotation.y = 3.14159 / 2;
-    scene.add(wall2);
-    collidableMeshList.push(wall2);
-    var wall2 = new THREE.Mesh(wallGeometry, wireMaterial);
-    wall2.position.set(-150, 50, 0);
-    wall2.rotation.y = 3.14159 / 2;
-    scene.add(wall2);
-  }
+  // {
+  //   var wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
+  //   wall2.position.set(-150, 50, 0);
+  //   wall2.rotation.y = 3.14159 / 2;
+  //   scene.add(wall2);
+  //   collidableMeshList.push(wall2);
+  //   var wall2 = new THREE.Mesh(wallGeometry, wireMaterial);
+  //   wall2.position.set(-150, 50, 0);
+  //   wall2.rotation.y = 3.14159 / 2;
+  //   scene.add(wall2);
+  // }
 
   //Orbitcontrols
     controls = new OrbitControls(camera, canvas);
