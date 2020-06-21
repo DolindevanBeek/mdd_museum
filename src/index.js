@@ -2,21 +2,19 @@
 //imports
 import './style.css';
 import * as THREE from 'three';
-//import * as ammo from 'ammo.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
-//import THREEx from './threex.keyboardstate.js';
 
 //standard global variables
 var scene, camera, renderer, controls, MovingCube, hemiLight, spotLight, boxsizeWithSpace, relativeCameraOffset, cameraOffset;
 var clock = new THREE.Clock();
-
 var keyboard = new THREEx.KeyboardState();
 
 //custom global variables
 const canvas = document.querySelector('#c');
+var collidableMeshList = [];
 
 init();
 animate();
@@ -37,11 +35,6 @@ function init(){
   renderer = new THREE.WebGLRenderer({ canvas });
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-  //orbitcontrols
-  //controls = new OrbitControls(camera, canvas);
-  //controls.target.set(0, 5, 0);
-  //controls.update();
 
   //plane
   // {
@@ -202,6 +195,8 @@ function init(){
 
         museum.traverse(function (child) {
 
+          collidableMeshList.push(child);
+
           //if child name is glass then don't cast shadow
 
           //if (child.name == 'Mesh7 glass_3 glass_section2 dome_glass dome_roof Model') {
@@ -214,6 +209,14 @@ function init(){
             child.castShadow = true;
             child.receiveShadow = true;
           }
+
+          //if (child.name == 'Mesh7 glass_3 glass_section2 dome_glass dome_roof Model') {
+          // if (child.name.match(/\b(handrails)\b/g)) {
+          //   console.log('handrails!');
+
+          //   collidableMeshList.push(child);
+          // }
+
         });
 
         // compute the box that contains all the stuff
@@ -227,10 +230,6 @@ function init(){
         boxsizeWithSpace = boxSize * 1.2;
         frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
 
-        // update the Trackball controls to handle the new size
-        //controls.maxDistance = boxSize * 10;
-        //controls.target.copy(boxCenter);
-        //controls.update();
         console.log(museum);
       });
     });
@@ -239,13 +238,33 @@ function init(){
   //Cube
   {
     var cubeSize = 1000;
-    var cubeGeo = new THREE.BoxBufferGeometry(cubeSize, cubeSize, cubeSize);
-    var cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
+    //var cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+    //var cubeGeo = new THREE.CubeGeometry(164, 164, 164, 8, 8, 8);
+    //var cubeGeo = new THREE.SphereGeometry(132, 8, 8);
+    var cubeGeo = new THREE.CubeGeometry(500, 1000, 500, 1, 1, 1);
+    //var cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
+    var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
     MovingCube.position.set(cubeSize + 1, cubeSize / 2 + 100, 0);
-    MovingCube.castShadow = true;
-    //MovingCube.position.set(0, 1, 0);
+    //MovingCube.castShadow = true;
     scene.add(MovingCube);
+  }
+
+  //wall
+  var wallGeometry = new THREE.CubeGeometry(2000, 2000, 200, 1, 1, 1);
+  var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8888ff });
+  var wireMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
+
+  {
+    var wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
+    wall2.position.set(-150, 50, 0);
+    wall2.rotation.y = 3.14159 / 2;
+    scene.add(wall2);
+    collidableMeshList.push(wall2);
+    var wall2 = new THREE.Mesh(wallGeometry, wireMaterial);
+    wall2.position.set(-150, 50, 0);
+    wall2.rotation.y = 3.14159 / 2;
+    scene.add(wall2);
   }
 
   //Orbitcontrols
@@ -264,15 +283,38 @@ function animate() {
 
 function update() {
 
+  // collision detection
+
+  var originPoint = MovingCube.position.clone();
+  var collided = false;
+
+  for (var vertexIndex = 0; vertexIndex < MovingCube.geometry.vertices.length; vertexIndex++) {
+    var localVertex = MovingCube.geometry.vertices[vertexIndex].clone();
+    var globalVertex = localVertex.applyMatrix4(MovingCube.matrix);
+    var directionVector = globalVertex.sub(MovingCube.position);
+    var distance = 100;
+
+    var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
+    var collisionResults = ray.intersectObjects(collidableMeshList);
+    if (collisionResults.length > 0 && collisionResults[0].distance <= directionVector.length()){
+      console.log('collision!');
+      collided = true;
+    }
+    else {
+      collided = false;
+    }
+  }
+
+  //keyboard movement
   var delta = clock.getDelta(); // seconds.
   var moveDistance = 5000 * delta; // 200 pixels per second
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
   // IF keyboard: set camera behind cube and move cube
-  if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right")){
+  if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right")) {
 
     // move forwards/backwards/left/right
-    if (keyboard.pressed("up"))
+    if (keyboard.pressed("up") && collided === false)
       MovingCube.translateZ(-moveDistance);
     if (keyboard.pressed("down"))
       MovingCube.translateZ(moveDistance);
@@ -296,6 +338,8 @@ function update() {
     controls.target.copy(MovingCube.position);
     controls.update();
   }, false);
+
+
 }
 
 function render() {
