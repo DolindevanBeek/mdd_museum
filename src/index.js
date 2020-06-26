@@ -26,10 +26,11 @@ function init(){
   scene.background = new THREE.Color('black');
 
   var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-  var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+  var VIEW_ANGLE = 75, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(1001, 650, 5000);
+  camera.position.set(0, 1800, 3000);
+
 
   renderer = new THREE.WebGLRenderer({ canvas });
   renderer.shadowMap.enabled = true;
@@ -74,8 +75,8 @@ function init(){
 
     // pick some near and far values for the frustum that
     // will contain the box.
-    camera.near = boxSize / 100;
-    camera.far = boxSize * 100;
+    camera.near = boxSize / 1000;
+    camera.far = boxSize * 1000;
 
     camera.updateProjectionMatrix();
 
@@ -193,7 +194,7 @@ function init(){
         museum.traverse(function (child) {
 
 
-          if (!child.name.match(/\b(dome_glass)\b/g)){
+          if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
             collidableMeshList.push(child);
           }
 
@@ -239,7 +240,7 @@ function init(){
     //var cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
     //var cubeGeo = new THREE.CubeGeometry(164, 164, 164, 8, 8, 8);
     //var cubeGeo = new THREE.SphereGeometry(132, 8, 8);
-    var cubeGeo = new THREE.CubeGeometry(500, 1000, 500, 1, 1, 1);
+    var cubeGeo = new THREE.CubeGeometry(500, 1800, 500, 1, 1, 1);
     //var cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
     var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
@@ -280,7 +281,7 @@ function update() {
     var collisionResults = ray.intersectObjects(collidableMeshList);
 
     if (collisionResults.length > 0 && collisionResults[0].point.y){
-      MovingCube.position.y = collisionResults[0].point.y + 600; //height of square
+      MovingCube.position.y = collisionResults[0].point.y + 1000; //height of square
     }
 
     // add and if its not a ramp or a staircase or a floor
@@ -289,11 +290,10 @@ function update() {
       var collisionName = collisionResults[0].object.name;
       var staircase = collisionName.match(/\b(\w*stair\w*)\b/g);
       var floor = collisionName.match(/\b(\w*floor\w*)\b/g);
-      var footwalk = collisionName.match(/\b(\w*footwalk\w*)\b/g);
 
       console.log(collisionName);
 
-      if (!staircase && !floor && !footwalk){
+      if (!staircase && !floor){
         console.log('frontal collision');
         collided = true;
         //console.log(collisionResults[0]);
@@ -326,7 +326,7 @@ function update() {
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-    relativeCameraOffset = new THREE.Vector3(0, 50, 5000);
+    relativeCameraOffset = new THREE.Vector3(0, 650, 3000);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;
