@@ -30,7 +30,6 @@ function init(){
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
   camera.position.set(1001, 650, 5000);
-  //camera.lookAt(scene.position);
 
   renderer = new THREE.WebGLRenderer({ canvas });
   renderer.shadowMap.enabled = true;
@@ -79,9 +78,6 @@ function init(){
     camera.far = boxSize * 100;
 
     camera.updateProjectionMatrix();
-
-    // point the camera to look at the center of the box
-    //camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z);
 
     // point the camera at the cube
     camera.lookAt(MovingCube.position);
@@ -182,27 +178,29 @@ function init(){
   //Object
   {
     const mtlLoader = new MTLLoader();
-    mtlLoader.load('./objects/200606_graduation_studio.mtl', (mtlParseResult) => {
+    mtlLoader.load('./objects/200626_graduation_studio.mtl', (mtlParseResult) => {
       const objLoader = new OBJLoader2();
       const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
       objLoader.addMaterials(materials);
 
-      objLoader.load('./objects/200606_graduation_studio.obj', (museum) => {
+      objLoader.load('./objects/200626_graduation_studio.obj', (museum) => {
         museum.updateMatrixWorld();
+        museum.position.set(0,0,0);
         scene.add(museum);
         museum.castShadow = true;
         museum.receiveShadow = true;
 
         museum.traverse(function (child) {
 
-          collidableMeshList.push(child);
+
+          if (!child.name.match(/\b(dome_glass)\b/g)){
+            collidableMeshList.push(child);
+          }
 
           //if child name is glass then don't cast shadow
 
           //if (child.name == 'Mesh7 glass_3 glass_section2 dome_glass dome_roof Model') {
           if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
-            console.log('glass3');
-
             child.receiveShadow = true;
           }
           else {
@@ -245,27 +243,11 @@ function init(){
     //var cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
     var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
-    MovingCube.position.set(cubeSize + 1, cubeSize / 2 + 100, 0);
+    MovingCube.position.set(0, cubeSize / 2 + 100, 0);
     //MovingCube.castShadow = true;
+    //MovingCube.position.set(0, 0, 0);
     scene.add(MovingCube);
   }
-
-  //wall
-  // var wallGeometry = new THREE.CubeGeometry(2000, 2000, 200, 1, 1, 1);
-  // var wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8888ff });
-  // var wireMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
-
-  // {
-  //   var wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
-  //   wall2.position.set(-150, 50, 0);
-  //   wall2.rotation.y = 3.14159 / 2;
-  //   scene.add(wall2);
-  //   collidableMeshList.push(wall2);
-  //   var wall2 = new THREE.Mesh(wallGeometry, wireMaterial);
-  //   wall2.position.set(-150, 50, 0);
-  //   wall2.rotation.y = 3.14159 / 2;
-  //   scene.add(wall2);
-  // }
 
   //Orbitcontrols
     controls = new OrbitControls(camera, canvas);
@@ -296,9 +278,30 @@ function update() {
 
     var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
     var collisionResults = ray.intersectObjects(collidableMeshList);
+
+    if (collisionResults.length > 0 && collisionResults[0].point.y){
+      MovingCube.position.y = collisionResults[0].point.y + 600; //height of square
+    }
+
+    // add and if its not a ramp or a staircase or a floor
     if (collisionResults.length > 0 && collisionResults[0].distance <= directionVector.length()){
-      console.log('collision!');
-      collided = true;
+
+      var collisionName = collisionResults[0].object.name;
+      var staircase = collisionName.match(/\b(\w*stair\w*)\b/g);
+      var floor = collisionName.match(/\b(\w*floor\w*)\b/g);
+      var footwalk = collisionName.match(/\b(\w*footwalk\w*)\b/g);
+
+      console.log(collisionName);
+
+      if (!staircase && !floor && !footwalk){
+        console.log('frontal collision');
+        collided = true;
+        //console.log(collisionResults[0]);
+      }
+
+      //If collisionResults[0].name === staircase { var staircase = true }
+      //if collisionResults[0].name === triggeroverlay { var overlay = true }
+
     }
     else {
       collided = false;
