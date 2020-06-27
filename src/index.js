@@ -6,9 +6,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { SSAOShader } from 'three/examples/jsm/shaders/SSAOShader.js';
 
 //standard global variables
-var scene, camera, renderer, controls, MovingCube, hemiLight, spotLight, boxsizeWithSpace, relativeCameraOffset, cameraOffset;
+var scene, camera, renderer; //basics
+var composer, depthMaterial, depthRenderTarget, ssaoPass; //postprocessing
+var hemiLight, spotLight; //lights
+var MovingCube, controls, boxsizeWithSpace; //elements and controls
+var relativeCameraOffset, cameraOffset; //camera related
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
 
@@ -26,10 +35,10 @@ function init(){
   scene.background = new THREE.Color('black');
 
   var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-  var VIEW_ANGLE = 75, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+  var VIEW_ANGLE = 90, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(0, 1800, 3000);
+  camera.position.set(0, 1800, 2000);
 
 
   renderer = new THREE.WebGLRenderer({ canvas });
@@ -177,14 +186,15 @@ function init(){
     scene.add(sky);
 
   //Object
+
   {
     const mtlLoader = new MTLLoader();
-    mtlLoader.load('./objects/200626_graduation_studio.mtl', (mtlParseResult) => {
+    mtlLoader.load('./objects/200627_graduation_studio.mtl', (mtlParseResult) => {
       const objLoader = new OBJLoader2();
       const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
       objLoader.addMaterials(materials);
 
-      objLoader.load('./objects/200626_graduation_studio.obj', (museum) => {
+      objLoader.load('./objects/200627_graduation_studio.obj', (museum) => {
         museum.updateMatrixWorld();
         museum.position.set(0,0,0);
         scene.add(museum);
@@ -235,6 +245,7 @@ function init(){
   }
 
   //Cube
+
   {
     var cubeSize = 1000;
     //var cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
@@ -255,6 +266,46 @@ function init(){
     //controls.target.set(MovingCube.position);
     //controls.maxPolarAngle = Math.PI / 2; //dont let it go below ground
     controls.update();
+
+
+  //POSTPROCESSING
+
+  //Renderpass
+  var renderPass = new RenderPass(scene, camera);
+  renderPass.renderToScreen = true;
+
+  //Setup depth pass
+  depthMaterial = new THREE.MeshDepthMaterial();
+  depthMaterial.depthPacking = THREE.RGBADepthPacking;
+  depthMaterial.blending = THREE.NoBlending;
+
+  var pars = {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter
+  };
+  depthRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, pars);
+
+  //Setup SSAO pass
+
+  //var ssaoPass = new SSAOPass(scene, camera, width, height);
+  //ssaoPass.kernelRadius = 16;
+
+  ssaoPass = new ShaderPass(SSAOShader);
+  ssaoPass.renderToScreen = false;
+  //console.log(ssaoPass);
+  //ssaoPass.uniforms[ "tDiffuse" ].value will be set by ShaderPass
+  //ssaoPass.uniforms["tDepth"].value = depthRenderTarget.texture;
+  //ssaoPass.uniforms['size'].value.set(window.innerWidth, window.innerHeight);
+  //ssaoPass.uniforms['cameraNear'].value = camera.near;
+  //ssaoPass.uniforms['cameraFar'].value = camera.far;
+  //ssaoPass.uniforms['onlyAO'].value = false;
+  //ssaoPass.uniforms['aoClamp'].value = 0.3;
+  //ssaoPass.uniforms['lumInfluence'].value = 0.5;
+
+  //Add passes to composer
+  composer = new EffectComposer(renderer);
+  composer.addPass(renderPass);
+  //composer.addPass(ssaoPass);
 
 }
 
@@ -326,7 +377,7 @@ function update() {
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-    relativeCameraOffset = new THREE.Vector3(0, 650, 3000);
+    relativeCameraOffset = new THREE.Vector3(0, 650, 2000);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;
@@ -364,7 +415,8 @@ function render() {
     camera.updateProjectionMatrix();
   }
 
-  renderer.render(scene, camera);
+  //renderer.render(scene, camera);
+  composer.render();
 
 }
 
