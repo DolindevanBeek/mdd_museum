@@ -6,15 +6,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
+
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js';
+
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+
 import { CopyShader } from 'three/examples/jsm/shaders/CopyShader.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { SSAOShader } from 'three/examples/jsm/shaders/SSAOShader.js';
+
 
 //standard global variables
 var scene, camera, renderer; //basics
-var composer, depthMaterial, depthRenderTarget, ssaoPass; //postprocessing
+var composer, effectScreen, effectFXAA, effectSSAO, depthMaterial, depthTarget; //postprocessing
 var hemiLight, spotLight; //lights
 var MovingCube, controls, boxsizeWithSpace; //elements and controls
 var relativeCameraOffset, cameraOffset; //camera related
@@ -40,10 +45,17 @@ function init(){
   scene.add(camera);
   camera.position.set(0, 1800, 2000);
 
-
+  //Renderer
+  //renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer = new THREE.WebGLRenderer({ canvas });
+  //renderer.autoClear = false;
+  //renderer.setPixelRatio(1);
+  //renderer.setSize(window.innerWidth, window.innerHeight);
+  //renderer.setPixelRatio(window.devicePixelRatio); //wow this fucks up bad :P dont use this
+
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  //renderer.physicallyBasedShading = true;
 
   //plane
   // {
@@ -84,8 +96,8 @@ function init(){
 
     // pick some near and far values for the frustum that
     // will contain the box.
-    camera.near = boxSize / 1000;
-    camera.far = boxSize * 1000;
+    camera.near = boxSize / 800;
+    camera.far = boxSize * 800;
 
     camera.updateProjectionMatrix();
 
@@ -269,44 +281,26 @@ function init(){
 
 
   //POSTPROCESSING
+  var width = window.innerWidth;
+  var height = window.innerHeight;
 
-  //Renderpass
   var renderPass = new RenderPass(scene, camera);
-  renderPass.renderToScreen = true;
 
-  //Setup depth pass
-  depthMaterial = new THREE.MeshDepthMaterial();
-  depthMaterial.depthPacking = THREE.RGBADepthPacking;
-  depthMaterial.blending = THREE.NoBlending;
+  var ssaoPass = new SSAOPass(scene, camera, width, height);
+  ssaoPass.kernelRadius = 10;
 
-  var pars = {
-    minFilter: THREE.LinearFilter,
-    magFilter: THREE.LinearFilter
-  };
-  depthRenderTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight, pars);
 
-  //Setup SSAO pass
+  var fxaaPass = new ShaderPass(FXAAShader);
 
-  //var ssaoPass = new SSAOPass(scene, camera, width, height);
-  //ssaoPass.kernelRadius = 16;
+  var pixelRatio = renderer.getPixelRatio();
 
-  ssaoPass = new ShaderPass(SSAOShader);
-  ssaoPass.renderToScreen = false;
-  //console.log(ssaoPass);
-  //ssaoPass.uniforms[ "tDiffuse" ].value will be set by ShaderPass
-  //ssaoPass.uniforms["tDepth"].value = depthRenderTarget.texture;
-  //ssaoPass.uniforms['size'].value.set(window.innerWidth, window.innerHeight);
-  //ssaoPass.uniforms['cameraNear'].value = camera.near;
-  //ssaoPass.uniforms['cameraFar'].value = camera.far;
-  //ssaoPass.uniforms['onlyAO'].value = false;
-  //ssaoPass.uniforms['aoClamp'].value = 0.3;
-  //ssaoPass.uniforms['lumInfluence'].value = 0.5;
+  fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvas.offsetWidth * pixelRatio);
+  fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvas.offsetHeight * pixelRatio);
 
-  //Add passes to composer
   composer = new EffectComposer(renderer);
   composer.addPass(renderPass);
-  //composer.addPass(ssaoPass);
-
+  composer.addPass(fxaaPass);
+  composer.addPass(ssaoPass);
 }
 
 function animate() {
@@ -405,6 +399,7 @@ function render() {
     const needResize = canvas.width !== width || canvas.height !== height;
     if (needResize) {
       renderer.setSize(width, height, false);
+      composer.setSize(width, height, false);
     }
     return needResize;
   }
@@ -415,8 +410,8 @@ function render() {
     camera.updateProjectionMatrix();
   }
 
-  //renderer.render(scene, camera);
-  composer.render();
+  renderer.render(scene, camera);
+  //composer.render();
 
 }
 
