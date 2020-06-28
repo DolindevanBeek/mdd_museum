@@ -3,6 +3,10 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js';
+
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js';
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { MtlObjBridge } from 'three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js';
@@ -18,7 +22,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 
 
 //standard global variables
-var scene, camera, renderer; //basics
+var scene, camera, renderer, museum; //basics
 var composer, effectScreen, effectFXAA, effectSSAO, depthMaterial, depthTarget; //postprocessing
 var hemiLight, spotLight; //lights
 var MovingCube, controls, boxsizeWithSpace; //elements and controls
@@ -40,10 +44,10 @@ function init(){
   scene.background = new THREE.Color('black');
 
   var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-  var VIEW_ANGLE = 90, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+  var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 2000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(0, 1800, 2000);
+  camera.position.set(0, 0, 20);
 
   //Renderer
   //renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -56,6 +60,9 @@ function init(){
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   //renderer.physicallyBasedShading = true;
+
+  var axesHelper = new THREE.AxesHelper(5);
+  scene.add(axesHelper);
 
   //plane
   // {
@@ -96,8 +103,8 @@ function init(){
 
     // pick some near and far values for the frustum that
     // will contain the box.
-    camera.near = boxSize / 800;
-    camera.far = boxSize * 800;
+    camera.near = boxSize / 100;
+    camera.far = boxSize * 100;
 
     camera.updateProjectionMatrix();
 
@@ -132,20 +139,20 @@ function init(){
     dirLight.position.multiplyScalar(30);
     scene.add(dirLight);
 
-    dirLight.castShadow = true;
+    // dirLight.castShadow = true;
 
-    dirLight.shadow.mapSize.width = 3048;
-    dirLight.shadow.mapSize.height = 3048;
+    // dirLight.shadow.mapSize.width = 2048;
+    // dirLight.shadow.mapSize.height = 2048;
 
-    var d = 80000;
+    // var d = 80000;
 
-    dirLight.shadow.camera.left = - d;
-    dirLight.shadow.camera.right = d;
-    dirLight.shadow.camera.top = d;
-    dirLight.shadow.camera.bottom = - d;
+    // dirLight.shadow.camera.left = - d;
+    // dirLight.shadow.camera.right = d;
+    // dirLight.shadow.camera.top = d;
+    // dirLight.shadow.camera.bottom = - d;
 
-    dirLight.shadow.camera.far = 80000;
-    dirLight.shadow.bias = - 0.0001;
+    // dirLight.shadow.camera.far = 80000;
+    // dirLight.shadow.bias = - 0.0001;
 
     // var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
     // scene.add(dirLightHeper);
@@ -186,7 +193,7 @@ function init(){
     };
     uniforms["topColor"].value.copy(hemiLight.color);
 
-  var skyGeo = new THREE.SphereBufferGeometry(100000, 32, 15);
+  var skyGeo = new THREE.SphereBufferGeometry(1000, 32, 15);
     var skyMat = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: vertexShader,
@@ -199,108 +206,167 @@ function init(){
 
   //Object
 
-  {
-    const mtlLoader = new MTLLoader();
-    mtlLoader.load('./objects/200627_graduation_studio.mtl', (mtlParseResult) => {
-      const objLoader = new OBJLoader2();
-      const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
-      objLoader.addMaterials(materials);
+  // {
+  //   const mtlLoader = new MTLLoader();
+  //   mtlLoader.load('./objects/200627_graduation_studio.mtl', (mtlParseResult) => {
+  //     const objLoader = new OBJLoader2();
+  //     const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
+  //     objLoader.addMaterials(materials);
 
-      objLoader.load('./objects/200627_graduation_studio.obj', (museum) => {
-        museum.updateMatrixWorld();
-        museum.position.set(0,0,0);
-        scene.add(museum);
-        museum.castShadow = true;
-        museum.receiveShadow = true;
+  //     objLoader.load('./objects/200627_graduation_studio.obj', (museum) => {
+  //       museum.updateMatrixWorld();
+  //       museum.position.set(0,0,0);
+  //       scene.add(museum);
+  //       //museum.castShadow = true;
+  //       //museum.receiveShadow = true;
 
-        museum.traverse(function (child) {
+  //       museum.traverse(function (child) {
+
+  //         //add to collision detector
+  //         if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
+  //           collidableMeshList.push(child);
+  //         }
+
+  //         //if child name is glass then don't cast shadow, otherwise ,do
+
+  //         // if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+  //         //   child.receiveShadow = true;
+  //         // }
+  //         // else {
+  //         //   child.castShadow = true;
+  //         //   child.receiveShadow = true;
+  //         // }
 
 
-          if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
-            collidableMeshList.push(child);
-          }
+  //       });
 
-          //if child name is glass then don't cast shadow
+  //       // compute the box that contains all the stuff
+  //       // from root and below
+  //       const box = new THREE.Box3().setFromObject(museum);
+  //       const boxSize = box.getSize(new THREE.Vector3()).length();
+  //       const boxCenter = box.getCenter(new THREE.Vector3());
 
-          //if (child.name == 'Mesh7 glass_3 glass_section2 dome_glass dome_roof Model') {
-          if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
-            child.receiveShadow = true;
-          }
-          else {
-            child.castShadow = true;
-            child.receiveShadow = true;
-          }
+  //       // set the camera to frame the box
+  //       boxsizeWithSpace = boxSize * 1.2;
+  //       frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
 
-          //if (child.name == 'Mesh7 glass_3 glass_section2 dome_glass dome_roof Model') {
-          // if (child.name.match(/\b(handrails)\b/g)) {
-          //   console.log('handrails!');
+  //       console.log(museum);
+  //     });
+  //   });
+  // }
 
-          //   collidableMeshList.push(child);
-          // }
+  // model with lightmap
+  // {
+  //   var loader = new FBXLoader();
+  //   loader.load('./objects/lightmap/200628_graduation_studio_lightup(no scene)_2020-06-28_1328.fbx', function (museum) {
+  //     //museum.updateMatrixWorld();
+  //     scene.add(museum);
 
-        });
+  //     // compute the box that contains all the stuff from root and below
+  //     const box = new THREE.Box3().setFromObject(museum);
+  //     const boxSize = box.getSize(new THREE.Vector3()).length();
+  //     const boxCenter = box.getCenter(new THREE.Vector3());
 
-        // compute the box that contains all the stuff
-        // from root and below
-        const box = new THREE.Box3().setFromObject(museum);
+  //     // set the camera to frame the box
+  //     boxsizeWithSpace = boxSize * 1.2;
+  //     frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
 
-        const boxSize = box.getSize(new THREE.Vector3()).length();
-        const boxCenter = box.getCenter(new THREE.Vector3());
+  //     console.log(museum);
 
-        // set the camera to frame the box
-        boxsizeWithSpace = boxSize * 1.2;
-        frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+  //   });
+  // }
 
-        console.log(museum);
-      });
-    });
-  }
+  //colladaloader
+
+  // loading manager
+
+  var loadingManager = new THREE.LoadingManager(function () {
+
+    scene.add(museum);
+
+  });
+
+  // if you like pina collada
+
+  var loader = new ColladaLoader(loadingManager);
+  loader.load('./objects/export_dae_4/200628_graduation_studio.dae', function (collada) {
+
+    museum = collada.scene;
+
+    museum.updateMatrixWorld();
+
+    museum.castShadow = true;
+    museum.receiveShadow = true;
+
+    // museum.traverse(function (child) {
+
+    //   //add to collision detector
+    //   if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
+    //     collidableMeshList.push(child);
+    //   }
+
+    //   //if child name is glass then don't cast shadow, otherwise ,do
+
+    //   if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+    //     child.receiveShadow = true;
+    //   }
+    //   else {
+    //     child.castShadow = true;
+    //     child.receiveShadow = true;
+    //   }
+    // }
+
+    // compute the box that contains all the stuff from root and below
+    const box = new THREE.Box3().setFromObject(museum);
+    const boxSize = box.getSize(new THREE.Vector3()).length();
+    const boxCenter = box.getCenter(new THREE.Vector3());
+
+    // set the camera to frame the box
+    boxsizeWithSpace = boxSize * 1.2;
+    frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+
+    console.log(museum);
+
+  });
 
   //Cube
 
   {
-    var cubeSize = 1000;
-    //var cubeGeo = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
-    //var cubeGeo = new THREE.CubeGeometry(164, 164, 164, 8, 8, 8);
-    //var cubeGeo = new THREE.SphereGeometry(132, 8, 8);
-    var cubeGeo = new THREE.CubeGeometry(500, 1800, 500, 1, 1, 1);
-    //var cubeMat = new THREE.MeshPhongMaterial({ color: '#8AC' });
+    var cubeHeight = 1.5;
+    var cubeGeo = new THREE.CubeGeometry(1.5, cubeHeight, 1.5, 1, 1, 1);
     var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
-    MovingCube.position.set(0, cubeSize / 2 + 100, 0);
-    //MovingCube.castShadow = true;
-    //MovingCube.position.set(0, 0, 0);
+    MovingCube.position.set(0, cubeHeight / 2 + 0.2, 0);
     scene.add(MovingCube);
   }
 
   //Orbitcontrols
     controls = new OrbitControls(camera, canvas);
-    //controls.target.set(MovingCube.position);
     //controls.maxPolarAngle = Math.PI / 2; //dont let it go below ground
     controls.update();
 
 
   //POSTPROCESSING
-  var width = window.innerWidth;
-  var height = window.innerHeight;
+  // var width = window.innerWidth;
+  // var height = window.innerHeight;
 
-  var renderPass = new RenderPass(scene, camera);
+  // var renderPass = new RenderPass(scene, camera);
 
-  var ssaoPass = new SSAOPass(scene, camera, width, height);
-  ssaoPass.kernelRadius = 10;
+  // var ssaoPass = new SSAOPass(scene, camera, width, height);
+  // ssaoPass.kernelRadius = 10;
 
 
-  var fxaaPass = new ShaderPass(FXAAShader);
+  // var fxaaPass = new ShaderPass(FXAAShader);
 
-  var pixelRatio = renderer.getPixelRatio();
+  // var pixelRatio = renderer.getPixelRatio();
 
-  fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvas.offsetWidth * pixelRatio);
-  fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvas.offsetHeight * pixelRatio);
+  // fxaaPass.material.uniforms['resolution'].value.x = 1 / (canvas.offsetWidth * pixelRatio);
+  // fxaaPass.material.uniforms['resolution'].value.y = 1 / (canvas.offsetHeight * pixelRatio);
 
-  composer = new EffectComposer(renderer);
-  composer.addPass(renderPass);
-  composer.addPass(fxaaPass);
-  composer.addPass(ssaoPass);
+  // composer = new EffectComposer(renderer);
+  // composer.addPass(renderPass);
+  // composer.addPass(fxaaPass);
+  // composer.addPass(ssaoPass);
 }
 
 function animate() {
@@ -325,37 +391,36 @@ function update() {
     var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
     var collisionResults = ray.intersectObjects(collidableMeshList);
 
-    if (collisionResults.length > 0 && collisionResults[0].point.y){
-      MovingCube.position.y = collisionResults[0].point.y + 1000; //height of square
-    }
-
-    // add and if its not a ramp or a staircase or a floor
-    if (collisionResults.length > 0 && collisionResults[0].distance <= directionVector.length()){
+    if (collisionResults.length > 0){
 
       var collisionName = collisionResults[0].object.name;
       var staircase = collisionName.match(/\b(\w*stair\w*)\b/g);
       var floor = collisionName.match(/\b(\w*floor\w*)\b/g);
-
       console.log(collisionName);
 
-      if (!staircase && !floor){
-        console.log('frontal collision');
-        collided = true;
-        //console.log(collisionResults[0]);
+      if (collisionResults[0].point.y) {
+        if(floor || staircase){
+          MovingCube.position.y = collisionResults[0].point.y + 5; //height of square
+        }
       }
 
-      //If collisionResults[0].name === staircase { var staircase = true }
-      //if collisionResults[0].name === triggeroverlay { var overlay = true }
+      if (collisionResults[0].distance <= directionVector.length() && !staircase && !floor){
+        console.log('frontal collision');
+        collided = true;
+      }
+      else {
+        collided = false;
+      }
 
     }
-    else {
-      collided = false;
-    }
+
+      //if collisionResults[0].name === triggeroverlay { var overlay = true }
+
   }
 
   //keyboard movement
   var delta = clock.getDelta(); // seconds.
-  var moveDistance = 5000 * delta; // 200 pixels per second
+  var moveDistance = 10 * delta; // 200 pixels per second
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
   // IF keyboard: set camera behind cube and move cube
@@ -371,7 +436,7 @@ function update() {
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-    relativeCameraOffset = new THREE.Vector3(0, 650, 2000);
+    relativeCameraOffset = new THREE.Vector3(0, 1, 5);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;
@@ -399,7 +464,7 @@ function render() {
     const needResize = canvas.width !== width || canvas.height !== height;
     if (needResize) {
       renderer.setSize(width, height, false);
-      composer.setSize(width, height, false);
+      //composer.setSize(width, height, false);
     }
     return needResize;
   }
