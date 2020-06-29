@@ -1,0 +1,299 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl Screenshot_2019_12_27_at_22_18_42
+Ka 0.000000 0.000000 0.000000
+Kd 0.741176 0.741176 0.745098
+Ks 0.330000 0.330000 0.330000
+map_Kd 200629_graduation_studio_nolayers/Screenshot_2019_12_27_at_22_18_42.png
+
+newmtl FrontColor
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl _2
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.330000 0.330000 0.330000
+d 0.500000
+
+newmtl gallery_material_7
+Ka 0.000000 0.000000 0.000000
+Kd 0.780392 0.654902 0.505882
+Ks 0.330000 0.330000 0.330000
+map_Kd 200629_graduation_studio_nolayers/gallery_material_7.jpg
+
+newmtl gallery_material_6
+Ka 0.000000 0.000000 0.000000
+Kd 0.843137 0.650980 0.454902
+Ks 0.330000 0.330000 0.330000
+
+newmtl _22
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.330000 0.330000 0.330000
+d 0.000000
+
+newmtl dock
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/dock.png
+
+newmtl Wood_Floor
+Ka 0.000000 0.000000 0.000000
+Kd 0.603922 0.411765 0.231373
+Ks 0.330000 0.330000 0.330000
+map_Kd 200629_graduation_studio_nolayers/Wood_Floor.jpg
+
+newmtl waste_managment
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.019608 0.027451
+Ks 0.330000 0.330000 0.330000
+map_Kd 200629_graduation_studio_nolayers/waste_managment.png
+
+newmtl WMD1___Berdolat_Salam
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/WMD1___Berdolat_Salam.jpg
+
+newmtl _
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl film
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/film.png
+
+newmtl forest
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/forest.png
+
+newmtl _auto_
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.330000 0.330000 0.330000
+
+newmtl _5
+Ka 0.000000 0.000000 0.000000
+Kd 0.886275 0.886275 0.886275
+Ks 0.330000 0.330000 0.330000
+
+newmtl _6
+Ka 0.000000 0.000000 0.000000
+Kd 0.996078 0.996078 0.996078
+Ks 0.330000 0.330000 0.330000
+
+newmtl gallery_material_4
+Ka 0.000000 0.000000 0.000000
+Kd 0.878431 0.870588 0.874510
+Ks 0.330000 0.330000 0.330000
+
+newmtl a0_
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/a0_.png
+
+newmtl plaza
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/plaza.png
+
+newmtl glass_house
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/glass_house.png
+
+newmtl politie
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/politie.png
+
+newmtl flag
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/flag.png
+
+newmtl Screenshot_2020_06_05_at_16_44_41
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/Screenshot_2020_06_05_at_16_44_41.png
+
+newmtl closed
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/closed.png
+
+newmtl welcome
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/welcome.png
+
+newmtl gallery_material_3
+Ka 0.000000 0.000000 0.000000
+Kd 0.921569 0.945098 0.945098
+Ks 0.330000 0.330000 0.330000
+
+newmtl gallery_material_5
+Ka 0.000000 0.000000 0.000000
+Kd 0.854902 0.858824 0.854902
+Ks 0.330000 0.330000 0.330000
+
+newmtl gallery_material_1
+Ka 0.000000 0.000000 0.000000
+Kd 0.094118 0.090196 0.094118
+Ks 0.330000 0.330000 0.330000
+
+newmtl post_its
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/post_its.jpg
+
+newmtl gallery_personal_typography_banner
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_personal_typography_banner.jpg
+
+newmtl gallery_personal_minicubes_banner
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_personal_minicubes_banner.jpg
+
+newmtl gallery_client_waste_banner
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_client_waste_banner.jpg
+
+newmtl gallery_personal_katy_sticky
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_personal_katy_sticky.jpg
+
+newmtl f2ced355d573125b65e796e1b3b4b699
+Ka 0.000000 0.000000 0.000000
+Kd 0.752941 0.752941 0.752941
+Ks 0.330000 0.330000 0.330000
+
+newmtl gallery_personal_boaz_banner
+Ka 0.000000 0.000000 0.000000
+Kd 0.141176 0.243137 0.980392
+Ks 0.330000 0.330000 0.330000
+map_Kd 200629_graduation_studio_nolayers/gallery_personal_boaz_banner.jpg
+
+newmtl van_eesteren_museum
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/van_eesteren_museum.png
+
+newmtl van_eesteren_museum1_
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/van_eesteren_museum1_.png
+
+newmtl gallery_personal_jasper_banner
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_personal_jasper_banner.jpg
+
+newmtl closed1_
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/closed1_.png
+
+newmtl gallery_whiterose_img_2
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_2.jpg
+
+newmtl gallery_whiterose_img_1
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_1.jpg
+
+newmtl bio
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/bio.jpg
+
+newmtl gallery_client_whiterose_banner
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_client_whiterose_banner.jpg
+
+newmtl Logo_for_robot__38___Veronika_Radenkova
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/Logo_for_robot__38___Veronika_Radenkova.png
+
+newmtl gallery_whiterose_img_3
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_3.jpg
+
+newmtl gallery_whiterose_img_5
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_5.jpg
+
+newmtl gallery_whiterose_img_6
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_6.jpg
+
+newmtl gallery_whiterose_img_9
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_9.jpg
+
+newmtl gallery_whiterose_img_10
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_10.jpg
+
+newmtl gallery_whiterose_img_11
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_11.jpg
+
+newmtl gallery_whiterose_img_13
+Ka 0.000000 0.000000 0.000000
+Kd 0.501961 0.501961 0.501961
+Ks 0.000000 0.000000 0.000000
+map_Kd 200629_graduation_studio_nolayers/gallery_whiterose_img_13.jpg
+

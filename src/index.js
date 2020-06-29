@@ -4,6 +4,7 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js';
 
@@ -44,21 +45,22 @@ function init(){
   scene.background = new THREE.Color('black');
 
   var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-  var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 2000;
+  var VIEW_ANGLE = 55, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 2000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(0, 0, 20);
+  camera.position.set(0, 3, 5);
 
   //Renderer
-  //renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer = new THREE.WebGLRenderer({ canvas });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  //renderer = new THREE.WebGLRenderer({ canvas });
   //renderer.autoClear = false;
   //renderer.setPixelRatio(1);
-  //renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   //renderer.setPixelRatio(window.devicePixelRatio); //wow this fucks up bad :P dont use this
 
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  //renderer.outputEncoding = THREE.sRGBEncoding;
   //renderer.physicallyBasedShading = true;
 
   var axesHelper = new THREE.AxesHelper(5);
@@ -103,8 +105,8 @@ function init(){
 
     // pick some near and far values for the frustum that
     // will contain the box.
-    camera.near = boxSize / 100;
-    camera.far = boxSize * 100;
+    camera.near = boxSize / 500;
+    camera.far = boxSize * 500;
 
     camera.updateProjectionMatrix();
 
@@ -135,30 +137,30 @@ function init(){
   {
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.color.setHSL(0.1, 1, 0.95);
-    dirLight.position.set(0, 1500, 800);
-    dirLight.position.multiplyScalar(30);
+    dirLight.position.set(- 1, 1.75, 1);
+    dirLight.position.multiplyScalar(150); //30
     scene.add(dirLight);
 
-    // dirLight.castShadow = true;
+    dirLight.castShadow = true;
 
-    // dirLight.shadow.mapSize.width = 2048;
-    // dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
 
-    // var d = 80000;
+    var d = 500;
 
-    // dirLight.shadow.camera.left = - d;
-    // dirLight.shadow.camera.right = d;
-    // dirLight.shadow.camera.top = d;
-    // dirLight.shadow.camera.bottom = - d;
+    dirLight.shadow.camera.left = - d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d;
+    dirLight.shadow.camera.bottom = - d;
 
-    // dirLight.shadow.camera.far = 80000;
-    // dirLight.shadow.bias = - 0.0001;
+    dirLight.shadow.camera.far = 3500;
+    dirLight.shadow.bias = - 0.0001;
 
-    // var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
-    // scene.add(dirLightHeper);
+    var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
+    scene.add(dirLightHeper);
 
-    // var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
-    // scene.add(shadowHelper);
+    var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+    scene.add(shadowHelper);
 
   }
 
@@ -208,19 +210,26 @@ function init(){
 
   // {
   //   const mtlLoader = new MTLLoader();
-  //   mtlLoader.load('./objects/200627_graduation_studio.mtl', (mtlParseResult) => {
+  //   mtlLoader.load('./objects/sketchup_export_small/200629_graduation_studio_nolayers.mtl', (mtlParseResult) => {
   //     const objLoader = new OBJLoader2();
   //     const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
   //     objLoader.addMaterials(materials);
 
-  //     objLoader.load('./objects/200627_graduation_studio.obj', (museum) => {
+  //     objLoader.load('./objects/sketchup_export_small/200629_graduation_studio_nolayers.obj', (museum) => {
   //       museum.updateMatrixWorld();
-  //       museum.position.set(0,0,0);
+  //       museum.position.set(0,-1000,-1000);
+  //       //museum.matrix.scale(0.05);
   //       scene.add(museum);
-  //       //museum.castShadow = true;
-  //       //museum.receiveShadow = true;
+  //       museum.castShadow = true;
+  //       museum.receiveShadow = true;
 
   //       museum.traverse(function (child) {
+
+  //         //child.scale.set(0.05, 0.05, 0.05);
+  //         //var group = new THREE.Group();
+  //         //group.add(child);
+
+  //         //group.position.set(0,1000,0);
 
   //         //add to collision detector
   //         if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
@@ -229,13 +238,13 @@ function init(){
 
   //         //if child name is glass then don't cast shadow, otherwise ,do
 
-  //         // if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
-  //         //   child.receiveShadow = true;
-  //         // }
-  //         // else {
-  //         //   child.castShadow = true;
-  //         //   child.receiveShadow = true;
-  //         // }
+  //         if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+  //           child.receiveShadow = true;
+  //         }
+  //         else {
+  //           child.castShadow = true;
+  //           child.receiveShadow = true;
+  //         }
 
 
   //       });
@@ -255,88 +264,182 @@ function init(){
   //   });
   // }
 
-  // model with lightmap
+  //model with lightmap
   // {
   //   var loader = new FBXLoader();
-  //   loader.load('./objects/lightmap/200628_graduation_studio_lightup(no scene)_2020-06-28_1328.fbx', function (museum) {
-  //     //museum.updateMatrixWorld();
-  //     scene.add(museum);
+  //   loader.load(
+  //     './objects/model new/200629_model.fbx',
+  //     function (museum) {
+  //       //museum.updateMatrixWorld();
+  //       scene.add(museum);
 
-  //     // compute the box that contains all the stuff from root and below
-  //     const box = new THREE.Box3().setFromObject(museum);
-  //     const boxSize = box.getSize(new THREE.Vector3()).length();
-  //     const boxCenter = box.getCenter(new THREE.Vector3());
+  //       // compute the box that contains all the stuff from root and below
+  //       const box = new THREE.Box3().setFromObject(museum);
+  //       const boxSize = box.getSize(new THREE.Vector3()).length();
+  //       const boxCenter = box.getCenter(new THREE.Vector3());
 
-  //     // set the camera to frame the box
-  //     boxsizeWithSpace = boxSize * 1.2;
-  //     frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+  //       // set the camera to frame the box
+  //       boxsizeWithSpace = boxSize * 1.2;
+  //       frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
 
-  //     console.log(museum);
+  //       console.log(museum);
+  //     },
 
-  //   });
+  //     // called while loading is progressing
+  //     function (xhr) {
+  //       console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+  //     },
+
+  //     // called when loading has errors
+  //     function (error) {
+  //       console.log(error);
+  //     },
+
+  //   );
   // }
+
+  //thankgoditsfridayeventhoughitsmondayloader
+
+  var loader = new GLTFLoader();
+  // Load a glTF resource
+  loader.load(
+    // resource URL
+    './objects/200627_graduation_studio.gltf',
+    // called when the resource is loaded
+    function (gltf) {
+
+      gltf.scene.scale.set(0.005, 0.005, 0.005) // scale here
+
+      scene.add(gltf.scene);
+
+      gltf.animations; // Array<THREE.AnimationClip>
+      gltf.scene; // THREE.Group
+      gltf.scenes; // Array<THREE.Group>
+      gltf.cameras; // Array<THREE.Camera>
+      gltf.asset; // Object
+
+      gltf.scene.traverse(function (child) {
+        //child.castShadow = true;
+        //child.receiveShadow = true;
+
+        //add to collision detector
+        if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g)) {
+          collidableMeshList.push(child);
+        }
+
+        //if child name is glass then don't cast shadow, otherwise ,do
+
+        if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+          child.receiveShadow = true;
+        }
+        else {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+
+      // compute the box that contains all the stuff from root and below
+      const box = new THREE.Box3().setFromObject(gltf.scene);
+      const boxSize = box.getSize(new THREE.Vector3()).length();
+      const boxCenter = box.getCenter(new THREE.Vector3());
+
+      // set the camera to frame the box
+      boxsizeWithSpace = boxSize * 1.2;
+      frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+
+      museum = gltf.scene;
+      console.log(museum);
+
+    },
+    // called while loading is progressing
+    function (xhr) {
+
+      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+
+    },
+    // called when loading has errors
+    function (error) {
+
+      console.log('error');
+
+    }
+  );
 
   //colladaloader
 
   // loading manager
 
-  var loadingManager = new THREE.LoadingManager(function () {
+  // var loadingManager = new THREE.LoadingManager(function () {
 
-    scene.add(museum);
+  //   scene.add(museum);
 
-  });
+  // });
 
   // if you like pina collada
 
-  var loader = new ColladaLoader(loadingManager);
-  loader.load('./objects/export_dae_4/200628_graduation_studio.dae', function (collada) {
+  // var loader = new ColladaLoader(loadingManager);
+  // loader.load('./objects/export_dae_4/200628_graduation_studio.dae', function (collada) {
 
-    museum = collada.scene;
+  //   museum = collada.scene;
 
-    museum.updateMatrixWorld();
+  //   var model_geometry = collada.scene.children[0].children[0].geometry;
+  //   var model_material = collada.scene.children[0].children[0].children[0].material;
 
-    museum.castShadow = true;
-    museum.receiveShadow = true;
+  //   museum.updateMatrixWorld();
 
-    // museum.traverse(function (child) {
+  //   museum.castShadow = true;
+  //   museum.receiveShadow = true;
 
-    //   //add to collision detector
-    //   if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
-    //     collidableMeshList.push(child);
-    //   }
+  //   // var daemesh = museum.children[0].children[0];
+  //   // daemesh.castShadow = true;
+  //   // daemesh.receiveShadow = true;
 
-    //   //if child name is glass then don't cast shadow, otherwise ,do
+  //   museum.traverse(function (child) {
+  //     child.castShadow = true;
+  //     child.receiveShadow = true;
+  //   });
 
-    //   if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
-    //     child.receiveShadow = true;
-    //   }
-    //   else {
-    //     child.castShadow = true;
-    //     child.receiveShadow = true;
-    //   }
-    // }
+  //   //   //add to collision detector
+  //   //   if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
+  //   //     collidableMeshList.push(child);
+  //   //   }
 
-    // compute the box that contains all the stuff from root and below
-    const box = new THREE.Box3().setFromObject(museum);
-    const boxSize = box.getSize(new THREE.Vector3()).length();
-    const boxCenter = box.getCenter(new THREE.Vector3());
+  //   //   //if child name is glass then don't cast shadow, otherwise ,do
 
-    // set the camera to frame the box
-    boxsizeWithSpace = boxSize * 1.2;
-    frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+  //   //   if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+  //   //     child.receiveShadow = true;
+  //   //   }
+  //   //   else {
+  //   //     child.castShadow = true;
+  //   //     child.receiveShadow = true;
+  //   //   }
+  //   // }
 
-    console.log(museum);
+  //   // compute the box that contains all the stuff from root and below
+  //   const box = new THREE.Box3().setFromObject(museum);
+  //   const boxSize = box.getSize(new THREE.Vector3()).length();
+  //   const boxCenter = box.getCenter(new THREE.Vector3());
 
-  });
+  //   // set the camera to frame the box
+  //   boxsizeWithSpace = boxSize * 1.2;
+  //   frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
+
+  //   console.log(museum);
+
+  // });
 
   //Cube
 
   {
-    var cubeHeight = 1.5;
-    var cubeGeo = new THREE.CubeGeometry(1.5, cubeHeight, 1.5, 1, 1, 1);
+    var cubeHeight = 5;
+    var cubeGeo = new THREE.CubeGeometry(3, cubeHeight, 3, 1, 1, 1);
     var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+    //var cubeMat = new THREE.MeshLambertMaterial({color: 0xCC0000});
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
     MovingCube.position.set(0, cubeHeight / 2 + 0.2, 0);
+
+    //MovingCube.castShadow = true;
     scene.add(MovingCube);
   }
 
@@ -400,7 +503,7 @@ function update() {
 
       if (collisionResults[0].point.y) {
         if(floor || staircase){
-          MovingCube.position.y = collisionResults[0].point.y + 5; //height of square
+          MovingCube.position.y = collisionResults[0].point.y + 3; //height of square
         }
       }
 
@@ -420,7 +523,7 @@ function update() {
 
   //keyboard movement
   var delta = clock.getDelta(); // seconds.
-  var moveDistance = 10 * delta; // 200 pixels per second
+  var moveDistance = 20 * delta; // 200 pixels per second
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
   // IF keyboard: set camera behind cube and move cube
@@ -436,7 +539,7 @@ function update() {
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-    relativeCameraOffset = new THREE.Vector3(0, 1, 5);
+    relativeCameraOffset = new THREE.Vector3(0, 1, 10);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;
