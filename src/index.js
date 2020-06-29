@@ -304,11 +304,11 @@ function init(){
   // Load a glTF resource
   loader.load(
     // resource URL
-    './objects/200627_graduation_studio.gltf',
+    './objects/unitytgif/200630_graduation_studio.gltf',
     // called when the resource is loaded
     function (gltf) {
 
-      gltf.scene.scale.set(0.005, 0.005, 0.005) // scale here
+      //gltf.scene.scale.set(0.005, 0.005, 0.005) // scale here
 
       scene.add(gltf.scene);
 
