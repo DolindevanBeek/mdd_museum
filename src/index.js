@@ -48,7 +48,7 @@ function init(){
   var VIEW_ANGLE = 55, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 2000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(0, 3, 5);
+  camera.position.set(0, 6, 4);
 
   //Renderer
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -432,12 +432,12 @@ function init(){
   //Cube
 
   {
-    var cubeHeight = 5;
-    var cubeGeo = new THREE.CubeGeometry(3, cubeHeight, 3, 1, 1, 1);
+    var cubeHeight = 1.7;
+    var cubeGeo = new THREE.CubeGeometry(0.5, cubeHeight, 0.5, 1, 1, 1);
     var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     //var cubeMat = new THREE.MeshLambertMaterial({color: 0xCC0000});
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
-    MovingCube.position.set(0, cubeHeight / 2 + 0.2, 0);
+    MovingCube.position.set(0, cubeHeight / 2 + 5.1, 0);
 
     //MovingCube.castShadow = true;
     scene.add(MovingCube);
@@ -503,7 +503,7 @@ function update() {
 
       if (collisionResults[0].point.y) {
         if(floor || staircase){
-          MovingCube.position.y = collisionResults[0].point.y + 3; //height of square
+          MovingCube.position.y = collisionResults[0].point.y + 5.1; //height of square
         }
       }
 
@@ -523,7 +523,7 @@ function update() {
 
   //keyboard movement
   var delta = clock.getDelta(); // seconds.
-  var moveDistance = 20 * delta; // 200 pixels per second
+  var moveDistance = 7 * delta; // 200 pixels per second
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
   // IF keyboard: set camera behind cube and move cube
@@ -539,7 +539,7 @@ function update() {
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-    relativeCameraOffset = new THREE.Vector3(0, 1, 10);
+    relativeCameraOffset = new THREE.Vector3(0, 1, 4);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;
