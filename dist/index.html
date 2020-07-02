@@ -59,7 +59,35 @@
 		</footer>
 	</div>
 
-	<div class="project_views">
+	<div id="project_view_overlay" class="project_view overlay">
+
+		<div id="project_view_close" class="project_view_close">
+			<img src="images/close.svg">
+		</div>
+
+		<div id="project_view_video" class="project_view_video" style="padding:56.25% 0 0 0;position:relative;"><iframe id="project_view_video_iframe" src="//player.vimeo.com/video/425962718"
+				style="position:absolute;top:0;left:0;width:100%;height:100%;" frameborder="0" allow="autoplay; fullscreen"
+				allowfullscreen></iframe>
+		</div>
+
+		<article id="project_view_content" class="project_view_content">
+
+			<h2 id="project_view_content_title" class="project_view_content_title">Title</h2>
+
+			<div id="project_view_content_text" class="project_view_content_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis
+			cursus, mi quis viverra ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et
+			justo cursus id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere. Lorem ipsum dolor sit amet,
+			consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare,
+			eros dolor interdum nulla, ut commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus id rutrum lorem
+			imperdiet. Nunc ut sem vitae risus tristique posuere.Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+			Suspendisse varius enim in eros elementum tristique.</div>
+
+			<a href="#" id="project_view_content_link" class="project_view_content_link">Here is a link</a>
+
+		</article>
+
+
+		<div id="project_view_students" class="project_view_students">STUDENT 1, STUDENT 2, STUDENT 3, STUDENT 4</div>
 
 	</div>
 
@@ -97,6 +125,7 @@
   </script>
 	<script src='threex.keyboardstate.js'></script>
 	<script src="bundle.js"></script>
+	<script src="https://player.vimeo.com/api/player.js"></script>
 
 </body>
 

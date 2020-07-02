@@ -45,10 +45,10 @@ function init(){
   scene.background = new THREE.Color('black');
 
   var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-  var VIEW_ANGLE = 55, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 2000;
+  var VIEW_ANGLE = 55, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 3000;
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   scene.add(camera);
-  camera.position.set(0, 6, 4);
+  camera.position.set(0, 1, 4);
 
   //Renderer
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -63,8 +63,8 @@ function init(){
   //renderer.outputEncoding = THREE.sRGBEncoding;
   //renderer.physicallyBasedShading = true;
 
-  var axesHelper = new THREE.AxesHelper(5);
-  scene.add(axesHelper);
+  // var axesHelper = new THREE.AxesHelper(5);
+  // scene.add(axesHelper);
 
   //plane
   // {
@@ -105,8 +105,8 @@ function init(){
 
     // pick some near and far values for the frustum that
     // will contain the box.
-    camera.near = boxSize / 500;
-    camera.far = boxSize * 500;
+    camera.near = boxSize / 700;
+    camera.far = boxSize * 700;
 
     camera.updateProjectionMatrix();
 
@@ -137,8 +137,8 @@ function init(){
   {
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.color.setHSL(0.1, 1, 0.95);
-    dirLight.position.set(- 1, 1.75, 1);
-    dirLight.position.multiplyScalar(150); //30
+    dirLight.position.set(- 1, 2.75, 1);
+    dirLight.position.multiplyScalar(30); //30
     scene.add(dirLight);
 
     dirLight.castShadow = true;
@@ -146,7 +146,7 @@ function init(){
     dirLight.shadow.mapSize.width = 2048;
     dirLight.shadow.mapSize.height = 2048;
 
-    var d = 500;
+    var d = 90;
 
     dirLight.shadow.camera.left = - d;
     dirLight.shadow.camera.right = d;
@@ -156,11 +156,11 @@ function init(){
     dirLight.shadow.camera.far = 3500;
     dirLight.shadow.bias = - 0.0001;
 
-    var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
-    scene.add(dirLightHeper);
+    //var dirLightHeper = new THREE.DirectionalLightHelper(dirLight, 10);
+    //scene.add(dirLightHeper);
 
-    var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
-    scene.add(shadowHelper);
+    //var shadowHelper = new THREE.CameraHelper(dirLight.shadow.camera);
+    //scene.add(shadowHelper);
 
   }
 
@@ -195,7 +195,7 @@ function init(){
     };
     uniforms["topColor"].value.copy(hemiLight.color);
 
-  var skyGeo = new THREE.SphereBufferGeometry(1000, 32, 15);
+  var skyGeo = new THREE.SphereBufferGeometry(200, 32, 15);
     var skyMat = new THREE.ShaderMaterial({
       uniforms: uniforms,
       vertexShader: vertexShader,
@@ -304,7 +304,7 @@ function init(){
   // Load a glTF resource
   loader.load(
     // resource URL
-    './objects/unitytgif/200630_graduation_studio.gltf',
+    './objects/200702_gITF_02/200702_gallery.gltf',
     // called when the resource is loaded
     function (gltf) {
 
@@ -320,23 +320,29 @@ function init(){
 
       gltf.scene.traverse(function (child) {
 
+        child.frustumCulled = false;
+
+        collidableMeshList.push(child);
+
         //add to collision detector
-        if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g)) {
-          collidableMeshList.push(child);
-        }
+        // if (child.type=='Object3D') {
+        //   if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g)) {
+        //     collidableMeshList.push(child);
+        //   }
+        // }
 
         //if child name is glass then don't cast shadow, otherwise ,do
-
-        if (child.name.match(/\b(glass_\w_*\d*)\b/g)) {
-          console.log(child);
+        if (child.name.match(/\b(glass_\w_*\d*)\b/g) && child.name.match(/\b(\w*floor\w*)\b/g)) {
           child.receiveShadow = true;
         }
         else {
           child.castShadow = true;
           child.receiveShadow = true;
         }
+
       });
 
+      //console.log(collidableMeshList);
 
       // compute the box that contains all the stuff from root and below
       const box = new THREE.Box3().setFromObject(gltf.scene);
@@ -436,7 +442,7 @@ function init(){
     var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
     //var cubeMat = new THREE.MeshLambertMaterial({color: 0xCC0000});
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
-    MovingCube.position.set(0, cubeHeight / 2 + 5.1, 0);
+    MovingCube.position.set(0, cubeHeight / 2 + 0.9, 0);
 
     //MovingCube.castShadow = true;
     scene.add(MovingCube);
@@ -491,30 +497,39 @@ function update() {
     var distance = 100;
 
     var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
-    var collisionResults = ray.intersectObjects(collidableMeshList);
+    var collisionResults = ray.intersectObjects(collidableMeshList, true);
 
     if (collisionResults.length > 0){
-
-      console.log(collisionResults[0]);
 
       var collisionName = collisionResults[0].object.name;
       var staircase = collisionName.match(/\b(\w*stair\w*)\b/g);
       var floor = collisionName.match(/\b(\w*floor\w*)\b/g);
-
-      console.log(collisionName);
+      var footwalk = collisionName.match(/\b(\w*footwalk\w*)\b/g);
 
       if (collisionResults[0].point.y) {
-        if(floor || staircase){
-          MovingCube.position.y = collisionResults[0].point.y + 5.1; //height of square
+        if (floor || staircase || footwalk){
+          MovingCube.position.y = collisionResults[0].point.y + 0.9; //height of square
         }
       }
 
-      if (collisionResults[0].distance <= directionVector.length() && !staircase && !floor){
+      if (collisionResults[0].distance <= directionVector.length() && !staircase && !floor && !footwalk){
+        console.log(collisionResults[0]);
         console.log('frontal collision');
+        console.log(collisionName);
         collided = true;
       }
       else {
         collided = false;
+      }
+
+      if (collisionName === 'trigger'){
+        console.log('triggered!');
+        //openmodalfunction();
+
+        //check which ID the trigger has & send that along in the function ->
+        //match that with the JSON ID ->
+        //get the line number of the json ->
+        //implement content in if statement
       }
 
     }
@@ -541,7 +556,7 @@ function update() {
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
 
-    relativeCameraOffset = new THREE.Vector3(0, 1, 4);
+    relativeCameraOffset = new THREE.Vector3(0, 1, 3);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;

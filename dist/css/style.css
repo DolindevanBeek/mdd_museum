@@ -52,12 +52,17 @@ p {
 
 /* z-indexes */
 
+.project_view {
+  z-index: 6;
+}
+
 header,
 .guide {
   z-index: 5;
 }
 
-.map_view {
+.map_view,
+.about_view {
   z-index: 4;
 }
 
@@ -229,8 +234,75 @@ header.white button svg .st0 {
   font-size: 0.9rem;
 }
 
-.ui_overlay {
-  height: 100vh;
+.project_view {
+  background-color: rgba(0, 0, 0, .8);
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  overflow: scroll;
+}
+
+.project_view_video {
+  max-width: 75%;
+  margin: auto;
+}
+
+.project_view_content {
+  max-width: 75%;
+  margin: auto;
+  text-align: left;
+}
+
+.project_view_content_title {
+  font-size: 3vw;
+  line-height: 3vw;
+  text-transform: uppercase;
+  padding: 0;
+  margin: 4vh 0;
+  font-weight: 500;
+}
+
+.project_view_content_text {
+  font-size: 1.8vw;
+  line-height: 3.6vw;
+  border-top: 3px solid white;
+  padding: 4vh 0;
+}
+
+.project_view_content_link {
+  display: inline-block;
+  border: 3px solid white;
+  padding: 1vw;
+  font-size: 1.8vw;
+  background: transparent;
+  text-decoration: none;
+  color: white;
+}
+
+.project_view_content_link:hover {
+  background: white;
+  color: black;
+}
+
+.project_view_students {
+  max-width: 75%;
+  margin: auto;
+  text-align: left;
+  border-top: 3px solid white;
+  font-size: 3vw;
+  line-height: 3vw;
+  padding: 4vh 0;
+  margin-top: 6vh;
+}
+
+.project_view_close {
+  max-width: 75%;
+  margin: auto;
+  text-align: right;
+}
+
+.project_view_close img {
+  width: 3vw;
 }
 
 /*animations*/
