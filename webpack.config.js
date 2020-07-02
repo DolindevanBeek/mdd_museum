@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     app: [
       './src/index.js',
+      './src/ui.js',
     ],
   },
   output: {
@@ -38,6 +39,6 @@ module.exports = {
     }
   },
   node: {
-    fs: 'empty'
+    fs: 'empty',
   },
 };

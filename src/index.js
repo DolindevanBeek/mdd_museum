@@ -319,8 +319,6 @@ function init(){
       gltf.asset; // Object
 
       gltf.scene.traverse(function (child) {
-        //child.castShadow = true;
-        //child.receiveShadow = true;
 
         //add to collision detector
         if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g)) {
@@ -329,7 +327,8 @@ function init(){
 
         //if child name is glass then don't cast shadow, otherwise ,do
 
-        if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
+        if (child.name.match(/\b(glass_\w_*\d*)\b/g)) {
+          console.log(child);
           child.receiveShadow = true;
         }
         else {
@@ -496,9 +495,12 @@ function update() {
 
     if (collisionResults.length > 0){
 
+      console.log(collisionResults[0]);
+
       var collisionName = collisionResults[0].object.name;
       var staircase = collisionName.match(/\b(\w*stair\w*)\b/g);
       var floor = collisionName.match(/\b(\w*floor\w*)\b/g);
+
       console.log(collisionName);
 
       if (collisionResults[0].point.y) {

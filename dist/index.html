@@ -3,10 +3,66 @@
 
 <head>
   <meta charset="utf-8">
-  <title>My first three.js app</title>
+	<title>MDD Graduation Gallery</title>
+	<link href="css/normalize.css" rel="stylesheet" type="text/css">
+	<link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
+
+	<div class="splash">
+
+	</div>
+
+	<header id="header">
+		<div><h1>MDD 2019/2020 Gallery</h1></div>
+		<div>
+			<button id="about_view_button">about
+				<svg width="14px" height="14px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+					y="0px" viewBox="0 0 12 12" style="enable-background:new 0 0 12 12;" xml:space="preserve">
+					<path class="st0" d="M5,5V0h2v5h5v2H7v5H5V7H0V5H5z" />
+				</svg>
+			</button>
+		</div>
+	</header>
+
+	<div class="guide">
+		<div class="map" id="map_view_button"><img src="images/map.svg"/></div>
+		<div class="movement">
+			<div class="keys">
+				<img class="key-up" src="images/key_up.svg"/>
+				<div>
+					<img class="key-left" src="images/key_left.svg" />
+					<img class="key-down" src="images/key_down.svg" />
+					<img class="key-right" src="images/key_right.svg" />
+				</div>
+				<span class="description">use the arrow keys to move around</span>
+			</div>
+			<div class="mouse">
+				<img src="images/mouse_dark.svg" />
+				<span class="description">move the camera with your mouse</span>
+			</div>
+		</div>
+	</div>
+
+	<div id="map_view_overlay" class="map_view overlay">
+		<img src="images/mapview.svg" />
+	</div>
+
+	<div id="about_view_overlay" class="about_view overlay">
+		<article>
+			Something about this gallery here.<br>And more text here.
+		</article>
+		<footer>
+			<span>Created by Dolinde van Beek & Will Neeteson</span>
+			<span>Copyright © 2020 Hogeschool van Amsterdam & Master Digital Design</span>
+		</footer>
+	</div>
+
+	<div class="project_views">
+
+	</div>
+
   <canvas id="c"></canvas>
   <script type="x-shader/x-vertex" id="vertexShader">
 

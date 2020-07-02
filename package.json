@@ -17,6 +17,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "ammo.js": "0.0.10"
+    "ammo.js": "0.0.10",
+    "csvtojson": "^2.0.10"
   }
 }

@@ -1,0 +1,18 @@
+<svg width="92" height="60" viewBox="0 0 92 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="33" y="1" width="26" height="26" stroke="black" stroke-width="2"/>
+<path d="M41 12L46 8L51 12" stroke="black" stroke-width="2"/>
+<line x1="46" y1="9" x2="46" y2="20" stroke="black" stroke-width="2"/>
+<path d="M32 0V-2H30V0H32ZM60 0H62V-2H60V0ZM60 28V30H62V28H60ZM32 28H30V30H32V28ZM32 2H60V-2H32V2ZM58 0V28H62V0H58ZM60 26H32V30H60V26ZM34 28V0H30V28H34Z" fill="black"/>
+<rect x="59" y="59" width="26" height="26" transform="rotate(-180 59 59)" stroke="black" stroke-width="2"/>
+<path d="M51 48L46 52L41 48" stroke="black" stroke-width="2"/>
+<line x1="46" y1="51" x2="46" y2="40" stroke="black" stroke-width="2"/>
+<path d="M60 60L60 62L62 62L62 60L60 60ZM32 60L30 60L30 62L32 62L32 60ZM32 32L32 30L30 30L30 32L32 32ZM60 32L62 32L62 30L60 30L60 32ZM60 58L32 58L32 62L60 62L60 58ZM34 60L34 32L30 32L30 60L34 60ZM32 34L60 34L60 30L32 30L32 34ZM58 32L58 60L62 60L62 32L58 32Z" fill="black"/>
+<rect x="91.0001" y="33" width="26" height="26" transform="rotate(90 91.0001 33)" stroke="black" stroke-width="2"/>
+<path d="M80.0001 41L84.0001 46L80.0001 51" stroke="black" stroke-width="2"/>
+<line x1="83.0001" y1="46" x2="72.0001" y2="46" stroke="black" stroke-width="2"/>
+<path d="M92.0001 32L94.0001 32L94.0001 30L92.0001 30L92.0001 32ZM92.0001 60L92.0001 62L94.0001 62L94.0001 60L92.0001 60ZM64.0001 60L62.0001 60L62.0001 62L64.0001 62L64.0001 60ZM64.0001 32L64.0001 30L62.0001 30L62.0001 32L64.0001 32ZM90.0001 32L90.0001 60L94.0001 60L94.0001 32L90.0001 32ZM92.0001 58L64.0001 58L64.0001 62L92.0001 62L92.0001 58ZM66.0001 60L66.0001 32L62.0001 32L62.0001 60L66.0001 60ZM64.0001 34L92.0001 34L92.0001 30L64.0001 30L64.0001 34Z" fill="black"/>
+<rect x="1" y="59" width="26" height="26" transform="rotate(-90 1 59)" stroke="black" stroke-width="2"/>
+<path d="M12 51L8 46L12 41" stroke="black" stroke-width="2"/>
+<line x1="9" y1="46" x2="20" y2="46" stroke="black" stroke-width="2"/>
+<path d="M0 60L-2 60L-2 62L8.74228e-08 62L0 60ZM-1.22392e-06 32L-1.31134e-06 30L-2 30L-2 32L-1.22392e-06 32ZM28 32L30 32L30 30L28 30L28 32ZM28 60L28 62L30 62L30 60L28 60ZM2 60L2 32L-2 32L-2 60L2 60ZM-1.1365e-06 34L28 34L28 30L-1.31134e-06 30L-1.1365e-06 34ZM26 32L26 60L30 60L30 32L26 32ZM28 58L-8.74228e-08 58L8.74228e-08 62L28 62L28 58Z" fill="black"/>
+</svg>
