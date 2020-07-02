@@ -304,7 +304,7 @@ function init(){
   // Load a glTF resource
   loader.load(
     // resource URL
-    './objects/200703_gITF_04/200703_graduation.gltf',
+    './objects/200703_gITF_05/200703_graduation.gltf',
     // called when the resource is loaded
     function (gltf) {
 
@@ -509,9 +509,27 @@ function openModal() {
 
     trigger = false;
 
-    for (var i = 0; i < project_data; i++){
-      console.log(project_data[i].id);
-    }
+    // function getKeyByValue(object, value) {
+    //   return Object.keys(object).find(key => object[key] === value);
+    // }
+
+
+    //console.log(getKeyByValue(project_data, "Katy Barnard"));
+
+    // Object.entries(project_data).forEach(
+    //   ([key, value]) => console.log(key, value)
+    // );
+
+    // function getProjectById(id) {
+    //   return project_data.filter(
+    //     function (project_data) {
+    //       return project_data.id == id
+    //     }
+    //   );
+    // }
+
+    // var found = getProjectById('Katy Barnard');
+    // console.log(found[0].project);
 
     var video_link = project_data[0].video_link;
     var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
