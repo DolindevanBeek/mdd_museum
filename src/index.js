@@ -26,7 +26,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 var scene, camera, renderer, museum; //basics
 var composer, effectScreen, effectFXAA, effectSSAO, depthMaterial, depthTarget; //postprocessing
 var hemiLight, spotLight; //lights
-var MovingCube, controls, boxsizeWithSpace; //elements and controls
+var MovingCube, controls, boxsizeWithSpace, trigger; //elements and controls
 var relativeCameraOffset, cameraOffset; //camera related
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
@@ -475,9 +475,85 @@ function init(){
   // composer.addPass(renderPass);
   // composer.addPass(fxaaPass);
   // composer.addPass(ssaoPass);
+
+}
+
+//load JSON data
+function loadJSON(callback) {
+
+  var xobj = new XMLHttpRequest();
+  xobj.overrideMimeType("application/json");
+  xobj.open('GET', 'projects.json', true); // Replace 'my_data' with the path to your file
+  xobj.onreadystatechange = function () {
+    if (xobj.readyState == 4 && xobj.status == "200") {
+      // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+      callback(xobj.responseText);
+    }
+  };
+  xobj.send(null);
+}
+
+function openModal() {
+  loadJSON(function (response) {
+    // Parse JSON string into object
+    var project_data = JSON.parse(response);
+    console.log(project_data);
+
+    var project_view = document.getElementById("project_view_overlay");
+    var video_container = document.getElementById("project_view_video");
+    var video = document.getElementById("project_view_video_iframe");
+    var title = document.getElementById("project_view_content_title");
+    var text = document.getElementById("project_view_content_text");
+    var link = document.getElementById("project_view_content_link");
+    var students = document.getElementById("project_view_students");
+
+    var video_link = project_data[0].video_link;
+    var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
+
+
+    //check if video
+    if (video_link) {
+      video.src = '//player.vimeo.com/video/' + video_id;
+    }
+    else {
+      video_container.style.display = "none";
+    }
+
+    //check if project name and client
+    if (project_data[0].project && project_data[0].client) {
+      title.innerHTML = project_data[0].project + " - " + project_data[0].client;
+    }
+    else if (project_data[0].project) {
+      title.innerHTML = project_data[0].project;
+    }
+    else if (project_data[0].client) {
+      title.innerHTML = project_data[0].client;
+    }
+
+    //check if external link
+    if (project_data[0].external_link) {
+      link.href = project_data[0].external_link;
+    }
+    else {
+      link.style.display = "none";
+    }
+
+    text.innerHTML = project_data[0].Text;
+    students.innerHTML = project_data[0].Students;
+
+    project_view.style.display = "block";
+    setTimeout(function () { project_view.classList.add("visible"); }, 100);
+
+  });
+}
+
+//open modal
+if (trigger) {
+  openModal();
 }
 
 function animate() {
+
   requestAnimationFrame(animate);
   render();
   update();
@@ -522,14 +598,16 @@ function update() {
         collided = false;
       }
 
-      if (collisionName === 'trigger'){
+      if (collisionName.match(/\b(\w*trigger\w*)\b/g)){
         console.log('triggered!');
-        //openmodalfunction();
-
+        trigger = true;
         //check which ID the trigger has & send that along in the function ->
         //match that with the JSON ID ->
         //get the line number of the json ->
         //implement content in if statement
+      }
+      else {
+        trigger = false;
       }
 
     }
