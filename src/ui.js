@@ -38,5 +38,6 @@ about.addEventListener("click", function () {
 project_view_close.addEventListener("click", function () {
   if (project_view.classList.contains("visible")) {
     project_view.classList.remove("visible");
+    setTimeout(function () { project_view.style.display = "none"; }, 200);
   }
 });

@@ -26,7 +26,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 var scene, camera, renderer, museum; //basics
 var composer, effectScreen, effectFXAA, effectSSAO, depthMaterial, depthTarget; //postprocessing
 var hemiLight, spotLight; //lights
-var MovingCube, controls, boxsizeWithSpace, trigger; //elements and controls
+var MovingCube, controls, boxsizeWithSpace, trigger, collisionName; //elements and controls
 var relativeCameraOffset, cameraOffset; //camera related
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
@@ -304,7 +304,7 @@ function init(){
   // Load a glTF resource
   loader.load(
     // resource URL
-    './objects/200702_gITF_02/200702_gallery.gltf',
+    './objects/200703_gITF_04/200703_graduation.gltf',
     // called when the resource is loaded
     function (gltf) {
 
@@ -507,9 +507,14 @@ function openModal() {
     var link = document.getElementById("project_view_content_link");
     var students = document.getElementById("project_view_students");
 
+    trigger = false;
+
+    for (var i = 0; i < project_data; i++){
+      console.log(project_data[i].id);
+    }
+
     var video_link = project_data[0].video_link;
     var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
-
 
     //check if video
     if (video_link) {
@@ -547,11 +552,6 @@ function openModal() {
   });
 }
 
-//open modal
-if (trigger) {
-  openModal();
-}
-
 function animate() {
 
   requestAnimationFrame(animate);
@@ -577,7 +577,7 @@ function update() {
 
     if (collisionResults.length > 0){
 
-      var collisionName = collisionResults[0].object.name;
+      collisionName = collisionResults[0].object.name;
       var staircase = collisionName.match(/\b(\w*stair\w*)\b/g);
       var floor = collisionName.match(/\b(\w*floor\w*)\b/g);
       var footwalk = collisionName.match(/\b(\w*footwalk\w*)\b/g);
@@ -589,9 +589,9 @@ function update() {
       }
 
       if (collisionResults[0].distance <= directionVector.length() && !staircase && !floor && !footwalk){
-        console.log(collisionResults[0]);
-        console.log('frontal collision');
-        console.log(collisionName);
+        //console.log(collisionResults[0]);
+        //console.log('frontal collision');
+        //console.log(collisionName);
         collided = true;
       }
       else {
@@ -599,15 +599,13 @@ function update() {
       }
 
       if (collisionName.match(/\b(\w*trigger\w*)\b/g)){
-        console.log('triggered!');
+        //console.log('triggered!');
         trigger = true;
+
         //check which ID the trigger has & send that along in the function ->
         //match that with the JSON ID ->
         //get the line number of the json ->
         //implement content in if statement
-      }
-      else {
-        trigger = false;
       }
 
     }
@@ -622,7 +620,7 @@ function update() {
   var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
 
   // IF keyboard: set camera behind cube and move cube
-  if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right")) {
+  if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right") || keyboard.pressed("space")) {
 
     // move forwards/backwards/left/right
     if (keyboard.pressed("up") && collided === false)
@@ -633,6 +631,8 @@ function update() {
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), rotateAngle);
     if (keyboard.pressed("right"))
       MovingCube.rotateOnAxis(new THREE.Vector3(0, 1, 0), -rotateAngle);
+    if (keyboard.pressed("space") && trigger)
+      openModal();
 
     relativeCameraOffset = new THREE.Vector3(0, 1, 3);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
