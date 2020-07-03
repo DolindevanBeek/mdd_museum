@@ -509,60 +509,47 @@ function openModal() {
 
     trigger = false;
 
-    // function getKeyByValue(object, value) {
-    //   return Object.keys(object).find(key => object[key] === value);
-    // }
+    for (var project in project_data) {
+      console.log(project); //this is the number!
 
+      if (project_data[project].id === collisionName){
+        console.log(project_data[project]);
 
-    //console.log(getKeyByValue(project_data, "Katy Barnard"));
+        var video_link = project_data[project].video_link;
+        var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
 
-    // Object.entries(project_data).forEach(
-    //   ([key, value]) => console.log(key, value)
-    // );
+        //check if video
+        if (video_link) {
+          video.src = '//player.vimeo.com/video/' + video_id;
+        }
+        else {
+          video_container.style.display = "none";
+        }
 
-    // function getProjectById(id) {
-    //   return project_data.filter(
-    //     function (project_data) {
-    //       return project_data.id == id
-    //     }
-    //   );
-    // }
+        //check if project name and client
+        if (project_data[project].project && project_data[project].client) {
+          title.innerHTML = project_data[project].project + " - " + project_data[project].client;
+        }
+        else if (project_data[project].project) {
+          title.innerHTML = project_data[project].project;
+        }
+        else if (project_data[project].client) {
+          title.innerHTML = project_data[project].client;
+        }
 
-    // var found = getProjectById('Katy Barnard');
-    // console.log(found[0].project);
+        //check if external link
+        if (project_data[project].external_link) {
+          link.href = project_data[project].external_link;
+        }
+        else {
+          link.style.display = "none";
+        }
 
-    var video_link = project_data[0].video_link;
-    var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
+        text.innerHTML = project_data[project].Text;
+        students.innerHTML = project_data[project].Students;
 
-    //check if video
-    if (video_link) {
-      video.src = '//player.vimeo.com/video/' + video_id;
+      }
     }
-    else {
-      video_container.style.display = "none";
-    }
-
-    //check if project name and client
-    if (project_data[0].project && project_data[0].client) {
-      title.innerHTML = project_data[0].project + " - " + project_data[0].client;
-    }
-    else if (project_data[0].project) {
-      title.innerHTML = project_data[0].project;
-    }
-    else if (project_data[0].client) {
-      title.innerHTML = project_data[0].client;
-    }
-
-    //check if external link
-    if (project_data[0].external_link) {
-      link.href = project_data[0].external_link;
-    }
-    else {
-      link.style.display = "none";
-    }
-
-    text.innerHTML = project_data[0].Text;
-    students.innerHTML = project_data[0].Students;
 
     project_view.style.display = "block";
     setTimeout(function () { project_view.classList.add("visible"); }, 100);
@@ -609,7 +596,7 @@ function update() {
       if (collisionResults[0].distance <= directionVector.length() && !staircase && !floor && !footwalk){
         //console.log(collisionResults[0]);
         //console.log('frontal collision');
-        //console.log(collisionName);
+        console.log(collisionName);
         collided = true;
       }
       else {
