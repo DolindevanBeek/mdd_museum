@@ -206,105 +206,13 @@ function init(){
     var sky = new THREE.Mesh(skyGeo, skyMat);
     scene.add(sky);
 
-  //Object
-
-  // {
-  //   const mtlLoader = new MTLLoader();
-  //   mtlLoader.load('./objects/sketchup_export_small/200629_graduation_studio_nolayers.mtl', (mtlParseResult) => {
-  //     const objLoader = new OBJLoader2();
-  //     const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
-  //     objLoader.addMaterials(materials);
-
-  //     objLoader.load('./objects/sketchup_export_small/200629_graduation_studio_nolayers.obj', (museum) => {
-  //       museum.updateMatrixWorld();
-  //       museum.position.set(0,-1000,-1000);
-  //       //museum.matrix.scale(0.05);
-  //       scene.add(museum);
-  //       museum.castShadow = true;
-  //       museum.receiveShadow = true;
-
-  //       museum.traverse(function (child) {
-
-  //         //child.scale.set(0.05, 0.05, 0.05);
-  //         //var group = new THREE.Group();
-  //         //group.add(child);
-
-  //         //group.position.set(0,1000,0);
-
-  //         //add to collision detector
-  //         if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
-  //           collidableMeshList.push(child);
-  //         }
-
-  //         //if child name is glass then don't cast shadow, otherwise ,do
-
-  //         if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
-  //           child.receiveShadow = true;
-  //         }
-  //         else {
-  //           child.castShadow = true;
-  //           child.receiveShadow = true;
-  //         }
-
-
-  //       });
-
-  //       // compute the box that contains all the stuff
-  //       // from root and below
-  //       const box = new THREE.Box3().setFromObject(museum);
-  //       const boxSize = box.getSize(new THREE.Vector3()).length();
-  //       const boxCenter = box.getCenter(new THREE.Vector3());
-
-  //       // set the camera to frame the box
-  //       boxsizeWithSpace = boxSize * 1.2;
-  //       frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
-
-  //       console.log(museum);
-  //     });
-  //   });
-  // }
-
-  //model with lightmap
-  // {
-  //   var loader = new FBXLoader();
-  //   loader.load(
-  //     './objects/model new/200629_model.fbx',
-  //     function (museum) {
-  //       //museum.updateMatrixWorld();
-  //       scene.add(museum);
-
-  //       // compute the box that contains all the stuff from root and below
-  //       const box = new THREE.Box3().setFromObject(museum);
-  //       const boxSize = box.getSize(new THREE.Vector3()).length();
-  //       const boxCenter = box.getCenter(new THREE.Vector3());
-
-  //       // set the camera to frame the box
-  //       boxsizeWithSpace = boxSize * 1.2;
-  //       frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
-
-  //       console.log(museum);
-  //     },
-
-  //     // called while loading is progressing
-  //     function (xhr) {
-  //       console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-  //     },
-
-  //     // called when loading has errors
-  //     function (error) {
-  //       console.log(error);
-  //     },
-
-  //   );
-  // }
-
   //thankgoditsfridayeventhoughitsmondayloader
 
   var loader = new GLTFLoader();
   // Load a glTF resource
   loader.load(
     // resource URL
-    './objects/200703_gITF_05/200703_graduation.gltf',
+    './objects/200703_gITF_06/200703_graduation.gltf',
     // called when the resource is loaded
     function (gltf) {
 
@@ -323,13 +231,6 @@ function init(){
         child.frustumCulled = false;
 
         collidableMeshList.push(child);
-
-        //add to collision detector
-        // if (child.type=='Object3D') {
-        //   if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g)) {
-        //     collidableMeshList.push(child);
-        //   }
-        // }
 
         //if child name is glass then don't cast shadow, otherwise ,do
         if (child.name.match(/\b(glass_\w_*\d*)\b/g) && child.name.match(/\b(\w*floor\w*)\b/g)) {
@@ -371,69 +272,6 @@ function init(){
     }
   );
 
-  //colladaloader
-
-  // loading manager
-
-  // var loadingManager = new THREE.LoadingManager(function () {
-
-  //   scene.add(museum);
-
-  // });
-
-  // if you like pina collada
-
-  // var loader = new ColladaLoader(loadingManager);
-  // loader.load('./objects/export_dae_4/200628_graduation_studio.dae', function (collada) {
-
-  //   museum = collada.scene;
-
-  //   var model_geometry = collada.scene.children[0].children[0].geometry;
-  //   var model_material = collada.scene.children[0].children[0].children[0].material;
-
-  //   museum.updateMatrixWorld();
-
-  //   museum.castShadow = true;
-  //   museum.receiveShadow = true;
-
-  //   // var daemesh = museum.children[0].children[0];
-  //   // daemesh.castShadow = true;
-  //   // daemesh.receiveShadow = true;
-
-  //   museum.traverse(function (child) {
-  //     child.castShadow = true;
-  //     child.receiveShadow = true;
-  //   });
-
-  //   //   //add to collision detector
-  //   //   if (!child.name.match(/\b(dome_glass)\b/g) && !child.name.match(/\b(\w*roof\w*)\b/g) ){
-  //   //     collidableMeshList.push(child);
-  //   //   }
-
-  //   //   //if child name is glass then don't cast shadow, otherwise ,do
-
-  //   //   if (child.name.match(/\b(glass_\d_*\d*)\b/g)) {
-  //   //     child.receiveShadow = true;
-  //   //   }
-  //   //   else {
-  //   //     child.castShadow = true;
-  //   //     child.receiveShadow = true;
-  //   //   }
-  //   // }
-
-  //   // compute the box that contains all the stuff from root and below
-  //   const box = new THREE.Box3().setFromObject(museum);
-  //   const boxSize = box.getSize(new THREE.Vector3()).length();
-  //   const boxCenter = box.getCenter(new THREE.Vector3());
-
-  //   // set the camera to frame the box
-  //   boxsizeWithSpace = boxSize * 1.2;
-  //   frameArea(boxsizeWithSpace, boxSize, boxCenter, camera);
-
-  //   console.log(museum);
-
-  // });
-
   //Cube
 
   {
@@ -443,8 +281,6 @@ function init(){
     //var cubeMat = new THREE.MeshLambertMaterial({color: 0xCC0000});
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
     MovingCube.position.set(0, cubeHeight / 2 + 0.9, 0);
-
-    //MovingCube.castShadow = true;
     scene.add(MovingCube);
   }
 
@@ -455,6 +291,7 @@ function init(){
 
 
   //POSTPROCESSING
+
   // var width = window.innerWidth;
   // var height = window.innerHeight;
 
@@ -510,10 +347,39 @@ function openModal() {
     trigger = false;
 
     for (var project in project_data) {
-      console.log(project); //this is the number!
+      //console.log(project); //this is the number!
 
-      if (project_data[project].id === collisionName){
-        console.log(project_data[project]);
+      //var regex = new RegExp(collisionName, 'g');
+      //var match = project_data[project].id.match(regex);
+      // console.log(match);
+      // console.log(collisionName);
+      // console.log(regex);
+
+      //console.log(project_data[project].id);
+
+      // var test = "welcome";
+
+      // if(test.match(regex)){
+      //   console.log(yay);
+      // }
+
+      console.log(collisionName);
+      var collisionNameShortened = collisionName.split('_');
+      console.log(collisionNameShortened[1]);
+
+      let myString = "trigger_welcome_0";
+      let myVariable = "welcome";
+
+      let myReg = new RegExp(collisionNameShortened[1] + ".*");
+      let myMatch = myString.match(myReg);
+      console.log(myMatch);
+
+      // if (project_data[project].id.match(regex)){
+      //   console.log('i match!');
+      // }
+
+      if (project_data[project].id.match(myReg)){
+        console.log('yay' + project_data[project]);
 
         var video_link = project_data[project].video_link;
         var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
@@ -606,16 +472,9 @@ function update() {
       if (collisionName.match(/\b(\w*trigger\w*)\b/g)){
         //console.log('triggered!');
         trigger = true;
-
-        //check which ID the trigger has & send that along in the function ->
-        //match that with the JSON ID ->
-        //get the line number of the json ->
-        //implement content in if statement
       }
 
     }
-
-      //if collisionResults[0].name === triggeroverlay { var overlay = true }
 
   }
 
@@ -639,7 +498,7 @@ function update() {
     if (keyboard.pressed("space") && trigger)
       openModal();
 
-    relativeCameraOffset = new THREE.Vector3(0, 1, 3);
+    relativeCameraOffset = new THREE.Vector3(0, 0.5, 2.8);
     cameraOffset = relativeCameraOffset.applyMatrix4(MovingCube.matrixWorld);
 
     camera.position.x = cameraOffset.x;
