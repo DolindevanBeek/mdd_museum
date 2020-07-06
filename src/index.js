@@ -26,10 +26,18 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 var scene, camera, renderer, museum; //basics
 var composer, effectScreen, effectFXAA, effectSSAO, depthMaterial, depthTarget; //postprocessing
 var hemiLight, spotLight; //lights
-var MovingCube, controls, boxsizeWithSpace, trigger, collisionName; //elements and controls
+var MovingCube, controls, boxsizeWithSpace, trigger, collisionName, project_data; //elements and controls
 var relativeCameraOffset, cameraOffset; //camera related
 var clock = new THREE.Clock();
 var keyboard = new THREEx.KeyboardState();
+
+//modal variables
+var video_container = document.getElementById("project_view_video");
+var video = document.getElementById("project_view_video_iframe");
+var title = document.getElementById("project_view_content_title");
+var text = document.getElementById("project_view_content_text");
+var link = document.getElementById("project_view_content_link");
+var students = document.getElementById("project_view_students");
 
 //custom global variables
 const canvas = document.querySelector('#c');
@@ -212,7 +220,7 @@ function init(){
   // Load a glTF resource
   loader.load(
     // resource URL
-    './objects/200703_gITF_06/200703_graduation.gltf',
+    './objects/200703_gITF_07/200703_graduation_gallery.gltf',
     // called when the resource is loaded
     function (gltf) {
 
@@ -262,6 +270,21 @@ function init(){
     function (xhr) {
 
       console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+      var percentageLoaded = (xhr.loaded / xhr.total * 100) + '%';
+
+      var splashView = document.getElementById("splash_view");
+      var loadingBar = document.getElementById("progress_bar");
+      var loadingBarContainer = document.getElementById("progress_bar_container");
+      var splashButton = document.getElementById("splash_button");
+
+      loadingBar.style.width = percentageLoaded;
+      console.log(percentageLoaded);
+
+      if (percentageLoaded === "100%"){
+        loadingBarContainer.classList.add("hidden");
+        setTimeout(function () { loadingBarContainer.style.display = "none"; }, 300);
+        setTimeout(function () { splashButton.style.opacity = 1; }, 400);
+      }
 
     },
     // called when loading has errors
@@ -277,10 +300,12 @@ function init(){
   {
     var cubeHeight = 1.7;
     var cubeGeo = new THREE.CubeGeometry(0.5, cubeHeight, 0.5, 1, 1, 1);
-    var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-    //var cubeMat = new THREE.MeshLambertMaterial({color: 0xCC0000});
+    //var cubeMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+    var cubeMat = new THREE.MeshLambertMaterial({color: 0xCC0000});
     MovingCube = new THREE.Mesh(cubeGeo, cubeMat);
     MovingCube.position.set(0, cubeHeight / 2 + 0.9, 0);
+    MovingCube.material.transparent = true;
+    MovingCube.material.opacity = 0;
     scene.add(MovingCube);
   }
 
@@ -313,6 +338,21 @@ function init(){
   // composer.addPass(fxaaPass);
   // composer.addPass(ssaoPass);
 
+  //LOADJSON
+  JSONLoader();
+
+  // MODAL
+
+  //don't display the video
+  video_container.style.display = "none";
+
+  //change title
+  title.innerHTML = "Info not available";
+  text.innerHTML = "Oops, we couldn't find this info, try moving around a bit and hitting space again, or try another sign!";
+
+  //don't display link or students
+  link.style.display = "none";
+  students.style.display = "none";
 }
 
 //load JSON data
@@ -328,99 +368,95 @@ function loadJSON(callback) {
     }
   };
   xobj.send(null);
+
+}
+
+function JSONLoader() {
+  loadJSON(function (response) {
+    // Parse JSON string into object
+
+    setInterval(() => {
+      project_data = JSON.parse(response);
+    }, 1000);
+
+  });
+}
+
+function putDataInModal(){
+  //console.log(project_data);
+
+  trigger = false;
+
+  for (var project in project_data) {
+
+    //console.log(collisionName);
+    var collisionNameShortened = collisionName.split('_');
+    //console.log(collisionNameShortened[1]);
+
+    //let myString = "welcome_0";
+    //let myVariable = "welcome";
+
+    let myReg = new RegExp("trigger_" + collisionNameShortened[1], 'gi');
+    //let myMatch = myString.match(myReg);
+    //console.log('hi' + myMatch);
+
+    if (project_data[project].id.match(myReg)) {
+
+      console.log('match' + project_data[project].id);
+
+      var video_link = project_data[project].video_link;
+      var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
+
+      //check if video
+      if (video_link) {
+        video_container.style.display = "block";
+        video.src = '//player.vimeo.com/video/' + video_id;
+      }
+      else {
+        video_container.style.display = "none";
+      }
+
+      //check if project name and client
+      if (project_data[project].project && project_data[project].client) {
+        title.innerHTML = project_data[project].project + " - " + project_data[project].client;
+      }
+      else if (project_data[project].project) {
+        title.innerHTML = project_data[project].project;
+      }
+      else if (project_data[project].client) {
+        title.innerHTML = project_data[project].client;
+      }
+
+      //check if external link
+      if (project_data[project].external_link) {
+        link.style.display = "block";
+        link.href = project_data[project].external_link;
+      }
+      else {
+        link.style.display = "none";
+      }
+
+      if (project_data[project].Students) {
+        students.style.display = "block";
+        students.innerHTML = project_data[project].Students;
+      }
+      else {
+        students.style.display = "none";
+      }
+
+      text.innerHTML = project_data[project].Text;
+
+    }
+  }
 }
 
 function openModal() {
-  loadJSON(function (response) {
-    // Parse JSON string into object
-    var project_data = JSON.parse(response);
-    console.log(project_data);
 
-    var project_view = document.getElementById("project_view_overlay");
-    var video_container = document.getElementById("project_view_video");
-    var video = document.getElementById("project_view_video_iframe");
-    var title = document.getElementById("project_view_content_title");
-    var text = document.getElementById("project_view_content_text");
-    var link = document.getElementById("project_view_content_link");
-    var students = document.getElementById("project_view_students");
+  putDataInModal();
 
-    trigger = false;
-
-    for (var project in project_data) {
-      //console.log(project); //this is the number!
-
-      //var regex = new RegExp(collisionName, 'g');
-      //var match = project_data[project].id.match(regex);
-      // console.log(match);
-      // console.log(collisionName);
-      // console.log(regex);
-
-      //console.log(project_data[project].id);
-
-      // var test = "welcome";
-
-      // if(test.match(regex)){
-      //   console.log(yay);
-      // }
-
-      console.log(collisionName);
-      var collisionNameShortened = collisionName.split('_');
-      console.log(collisionNameShortened[1]);
-
-      let myString = "trigger_welcome_0";
-      let myVariable = "welcome";
-
-      let myReg = new RegExp(collisionNameShortened[1] + ".*");
-      let myMatch = myString.match(myReg);
-      console.log(myMatch);
-
-      // if (project_data[project].id.match(regex)){
-      //   console.log('i match!');
-      // }
-
-      if (project_data[project].id.match(myReg)){
-        console.log('yay' + project_data[project]);
-
-        var video_link = project_data[project].video_link;
-        var video_id = video_link.substr(video_link.lastIndexOf('/') + 1);
-
-        //check if video
-        if (video_link) {
-          video.src = '//player.vimeo.com/video/' + video_id;
-        }
-        else {
-          video_container.style.display = "none";
-        }
-
-        //check if project name and client
-        if (project_data[project].project && project_data[project].client) {
-          title.innerHTML = project_data[project].project + " - " + project_data[project].client;
-        }
-        else if (project_data[project].project) {
-          title.innerHTML = project_data[project].project;
-        }
-        else if (project_data[project].client) {
-          title.innerHTML = project_data[project].client;
-        }
-
-        //check if external link
-        if (project_data[project].external_link) {
-          link.href = project_data[project].external_link;
-        }
-        else {
-          link.style.display = "none";
-        }
-
-        text.innerHTML = project_data[project].Text;
-        students.innerHTML = project_data[project].Students;
-
-      }
-    }
-
-    project_view.style.display = "block";
-    setTimeout(function () { project_view.classList.add("visible"); }, 100);
-
-  });
+  var project_view = document.getElementById("project_view_overlay");
+  project_view.style.display = "block";
+  setTimeout(function () { project_view.classList.add("visible"); }, 100);
 }
 
 function animate() {
@@ -480,8 +516,8 @@ function update() {
 
   //keyboard movement
   var delta = clock.getDelta(); // seconds.
-  var moveDistance = 7 * delta; // 200 pixels per second
-  var rotateAngle = Math.PI / 2 * delta;   // pi/2 radians (90 degrees) per second
+  var moveDistance = 5 * delta; // 200 pixels per second
+  var rotateAngle = Math.PI / 3 * delta;   // pi/2 radians (90 degrees) per second
 
   // IF keyboard: set camera behind cube and move cube
   if (keyboard.pressed("up") || keyboard.pressed("down") || keyboard.pressed("left") || keyboard.pressed("right") || keyboard.pressed("space")) {

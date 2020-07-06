@@ -6,6 +6,8 @@ var about_view = document.getElementById("about_view_overlay");
 var header = document.getElementById("header");
 var project_view_close = document.getElementById("project_view_close");
 var project_view = document.getElementById("project_view_overlay");
+var splash_view = document.getElementById("splash_view");
+var splashButton = document.getElementById("splash_button");
 
 map.addEventListener("click", function () {
 
@@ -40,4 +42,9 @@ project_view_close.addEventListener("click", function () {
     project_view.classList.remove("visible");
     setTimeout(function () { project_view.style.display = "none"; }, 200);
   }
+});
+
+splashButton.addEventListener("click", function () {
+  splash_view.classList.remove("visible");
+  setTimeout(function () { splash_view.style.display = "none"; }, 200);
 });

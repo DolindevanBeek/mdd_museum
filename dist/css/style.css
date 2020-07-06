@@ -223,6 +223,10 @@ header.white button svg .st0 {
   font-weight: 500;
 }
 
+.about_view article a{
+  display: inline;
+}
+
 .about_view footer {
   width: 100%;
   border-top: 2px solid;
@@ -292,7 +296,7 @@ header.white button svg .st0 {
   font-size: 3vw;
   line-height: 3vw;
   padding: 4vh 0;
-  margin-top: 6vh;
+  margin: 6vh auto;
 }
 
 .project_view_close {
@@ -312,29 +316,66 @@ header.white button svg .st0 {
   justify-content: center;
   flex-direction: column;
 
-  /*display: flex;*/
-  /*opacity: 1; */
+  display: flex;
+  opacity: 1;
 }
 
 .splash_view h1 {
-  max-width 75%;
+  max-width: 75%;
   font-size: 2.5vw;
   line-height: 1.2em;
+  display: block;
+  text-align: center;
+}
+
+.progress_button_container {
+  max-width: 75%;
+  margin: 0 auto;
+  min-height: 20vh;
+  text-align: center;
+  margin-top: 3vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.progress_button_container button {
+  display: inline-block;
+  border: 3px solid white;
+  padding: 1vw;
+  font-size: 1.8vw;
+  background: transparent;
+  text-decoration: none;
+  color: white;
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+.progress_button_container button:hover {
+  background: white;
+  color: black;
 }
 
 .progress {
   position: relative;
   height: 2vw;
-  width: 40%;
+  width: 500px;
   border: 3px solid white;
   border-radius: 99px;
   overflow: hidden;
   margin: 10vh 0;
+  opacity: 1;
+  transition: opacity 1s;
+}
+
+.progress.hidden {
+  opacity: 0;
 }
 
 .progress .progress_bar {
   background-color: #fff;
-  width: 100%;
+  width: 0%;
   height: 100%;
 }
 
